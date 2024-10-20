@@ -1,6 +1,10 @@
 package properties
 
-import "github.com/pchchv/bpdf/consts/fontstyle"
+import (
+	"github.com/pchchv/bpdf/consts/align"
+	"github.com/pchchv/bpdf/consts/breakline"
+	"github.com/pchchv/bpdf/consts/fontstyle"
+)
 
 const (
 	Top         Place = "top"          // place in the top of the page
@@ -34,4 +38,29 @@ type PageNumber struct {
 	Size float64
 	// Color defines which will be applied to page count.
 	Color *Color
+}
+
+// GetNumberTextProp returns the Text properties of the page number.
+func (p *PageNumber) GetNumberTextProp(height float64) *Text {
+	text := &Text{
+		Family: p.Family,
+		Style:  p.Style,
+		Size:   p.Size,
+		Color:  p.Color,
+		Align:  align.Center,
+	}
+
+	if p.Place == LeftBottom || p.Place == LeftTop {
+		text.Align = align.Left
+	} else if p.Place == RightBottom || p.Place == RightTop {
+		text.Align = align.Right
+	}
+
+	if p.Place == RightBottom || p.Place == Bottom || p.Place == LeftBottom {
+		text.Top = height
+	}
+
+	text.BreakLineStrategy = breakline.EmptySpaceStrategy
+
+	return text
 }
