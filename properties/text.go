@@ -87,3 +87,53 @@ func (t *Text) ToMap() (m map[string]interface{}) {
 
 	return
 }
+
+// MakeValid from Text define default values for a Text.
+func (t *Text) MakeValid(font *Font) {
+	minValue := 0.0
+	undefinedValue := 0.0
+
+	if t.Family == "" {
+		t.Family = font.Family
+	}
+
+	if t.Style == "" {
+		t.Style = font.Style
+	}
+
+	if t.Size == undefinedValue {
+		t.Size = font.Size
+	}
+
+	if t.Color == nil {
+		t.Color = font.Color
+	}
+
+	if t.Align == "" {
+		t.Align = align.Left
+	}
+
+	if t.Top < minValue {
+		t.Top = minValue
+	}
+
+	if t.Bottom < minValue {
+		t.Bottom = minValue
+	}
+
+	if t.Left < minValue {
+		t.Left = minValue
+	}
+
+	if t.Right < minValue {
+		t.Right = minValue
+	}
+
+	if t.VerticalPadding < 0 {
+		t.VerticalPadding = 0
+	}
+
+	if t.BreakLineStrategy == "" {
+		t.BreakLineStrategy = breakline.EmptySpaceStrategy
+	}
+}
