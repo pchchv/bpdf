@@ -1,6 +1,9 @@
 package properties
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/pchchv/bpdf/consts/align"
 	"github.com/pchchv/bpdf/consts/breakline"
 	"github.com/pchchv/bpdf/consts/fontstyle"
@@ -63,4 +66,29 @@ func (p *PageNumber) GetNumberTextProp(height float64) *Text {
 	text.BreakLineStrategy = breakline.EmptySpaceStrategy
 
 	return text
+}
+
+// GetPageString returns the page string.
+func (p *PageNumber) GetPageString(current, total int) string {
+	pattern := strings.ReplaceAll(p.Pattern, "{current}", fmt.Sprintf("%d", current))
+	return strings.ReplaceAll(pattern, "{total}", fmt.Sprintf("%d", total))
+}
+
+// WithFont apply font if not defined before.
+func (p *PageNumber) WithFont(font *Font) {
+	if p.Color == nil {
+		p.Color = font.Color
+	}
+
+	if p.Size == 0 {
+		p.Size = font.Size
+	}
+
+	if p.Style == "" {
+		p.Style = font.Style
+	}
+
+	if p.Family == "" {
+		p.Family = font.Family
+	}
 }
