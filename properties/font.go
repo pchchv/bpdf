@@ -1,6 +1,9 @@
 package properties
 
-import "github.com/pchchv/bpdf/consts/fontstyle"
+import (
+	"github.com/pchchv/bpdf/consts/align"
+	"github.com/pchchv/bpdf/consts/fontstyle"
+)
 
 // Font represents properties from a text.
 type Font struct {
@@ -29,4 +32,36 @@ func (f *Font) AppendMap(m map[string]interface{}) map[string]interface{} {
 	}
 
 	return m
+}
+
+// MakeValid from Font define default values for a Signature.
+func (f *Font) MakeValid(defaultFamily string) {
+	if f.Family == "" {
+		f.Family = defaultFamily
+	}
+
+	if f.Style == "" {
+		f.Style = fontstyle.Normal
+	}
+
+	if f.Size == 0.0 {
+		f.Size = 8.0
+	}
+}
+
+// ToTextProp from Font return a Text based on Font.
+func (f *Font) ToTextProp(align align.Type, top float64, verticalPadding float64) *Text {
+	textProp := &Text{
+		Family:          f.Family,
+		Style:           f.Style,
+		Size:            f.Size,
+		Align:           align,
+		Top:             top,
+		VerticalPadding: verticalPadding,
+		Color:           f.Color,
+	}
+
+	textProp.MakeValid(f)
+
+	return textProp
 }
