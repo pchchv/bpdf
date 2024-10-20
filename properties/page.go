@@ -92,3 +92,32 @@ func (p *PageNumber) WithFont(font *Font) {
 		p.Family = font.Family
 	}
 }
+
+// AppendMap appends the font fields to a map.
+func (p *PageNumber) AppendMap(m map[string]interface{}) map[string]interface{} {
+	if p.Pattern != "" {
+		m["page_number_pattern"] = p.Pattern
+	}
+
+	if p.Place != "" {
+		m["page_number_place"] = p.Place
+	}
+
+	if p.Family != "" {
+		m["page_number_family"] = p.Family
+	}
+
+	if p.Style != "" {
+		m["page_number_style"] = p.Style
+	}
+
+	if p.Size != 0 {
+		m["page_number_size"] = p.Size
+	}
+
+	if p.Color != nil {
+		m["page_number_color"] = p.Color.ToString()
+	}
+
+	return m
+}
