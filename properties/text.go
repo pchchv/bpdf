@@ -34,3 +34,56 @@ type Text struct {
 	// Hyperlink define a link to be opened when the text is clicked.
 	Hyperlink *string
 }
+
+// ToMap converts a Text to a map.
+func (t *Text) ToMap() (m map[string]interface{}) {
+	if t.Top != 0 {
+		m["prop_top"] = t.Top
+	}
+
+	if t.Bottom != 0 {
+		m["prop_bottom"] = t.Bottom
+	}
+
+	if t.Left != 0 {
+		m["prop_left"] = t.Left
+	}
+
+	if t.Right != 0 {
+		m["prop_right"] = t.Right
+	}
+
+	if t.Family != "" {
+		m["prop_font_family"] = t.Family
+	}
+
+	if t.Style != "" {
+		m["prop_font_style"] = t.Style
+	}
+
+	if t.Size != 0 {
+		m["prop_font_size"] = t.Size
+	}
+
+	if t.Align != "" {
+		m["prop_align"] = t.Align
+	}
+
+	if t.BreakLineStrategy != "" {
+		m["prop_breakline_strategy"] = t.BreakLineStrategy
+	}
+
+	if t.VerticalPadding != 0 {
+		m["prop_vertical_padding"] = t.VerticalPadding
+	}
+
+	if t.Color != nil {
+		m["prop_color"] = t.Color.ToString()
+	}
+
+	if t.Hyperlink != nil {
+		m["prop_hyperlink"] = *t.Hyperlink
+	}
+
+	return
+}
