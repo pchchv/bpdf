@@ -36,7 +36,8 @@ type Text struct {
 }
 
 // ToMap converts a Text to a map.
-func (t *Text) ToMap() (m map[string]interface{}) {
+func (t *Text) ToMap() map[string]interface{} {
+	m := make(map[string]interface{})
 	if t.Top != 0 {
 		m["prop_top"] = t.Top
 	}
@@ -85,7 +86,7 @@ func (t *Text) ToMap() (m map[string]interface{}) {
 		m["prop_hyperlink"] = *t.Hyperlink
 	}
 
-	return
+	return m
 }
 
 // MakeValid from Text define default values for a Text.
