@@ -1,7 +1,7 @@
 // The fontstyle package contains all default font styles.
 package fontstyle
 
-// Type is a representation of a style DefaultFont.
+// Fontstyle is a representation of a style DefaultFont.
 type Fontstyle string
 
 const (

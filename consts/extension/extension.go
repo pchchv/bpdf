@@ -1,7 +1,7 @@
 // The extension package contains all image extensions.
 package extension
 
-// Type is a representation of a Image extension.
+// Extension is a representation of a Image extension.
 type Extension string
 
 const (
