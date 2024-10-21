@@ -50,7 +50,7 @@ func (f *Font) MakeValid(defaultFamily string) {
 }
 
 // ToTextProp from Font return a Text based on Font.
-func (f *Font) ToTextProp(align align.Type, top float64, verticalPadding float64) *Text {
+func (f *Font) ToTextProp(align align.Align, top float64, verticalPadding float64) *Text {
 	textProp := &Text{
 		Family:          f.Family,
 		Style:           f.Style,

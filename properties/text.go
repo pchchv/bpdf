@@ -24,7 +24,7 @@ type Text struct {
 	// Size of the text.
 	Size float64
 	// Align of the text.
-	Align align.Type
+	Align align.Align
 	// BreakLineStrategy define the break line strategy.
 	BreakLineStrategy breakline.Strategy
 	// VerticalPadding define an additional space between linet.
