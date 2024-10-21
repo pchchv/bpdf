@@ -16,3 +16,53 @@ type Rect struct {
 	// Center define that the barcode will be vertically and horizontally centralized.
 	Center bool
 }
+
+// ToMap from Rect will return a map representation from Rect.
+func (r *Rect) ToMap() map[string]interface{} {
+	m := make(map[string]interface{})
+	if r.Left != 0 {
+		m["prop_left"] = r.Left
+	}
+
+	if r.Top != 0 {
+		m["prop_top"] = r.Top
+	}
+
+	if r.Percent != 0 {
+		m["prop_percent"] = r.Percent
+	}
+
+	if r.Center {
+		m["prop_center"] = r.Center
+	}
+
+	if r.JustReferenceWidth {
+		m["prop_just_reference_Width"] = r.JustReferenceWidth
+	}
+
+	return m
+}
+
+// MakeValid from Rect will make the properties from a rectangle reliable to fit inside a cell
+// and define default values for a rectangle.
+func (r *Rect) MakeValid() {
+	minPercentage := 0.0
+	maxPercentage := 100.0
+	minValue := 0.0
+	if r.Percent <= minPercentage || r.Percent > maxPercentage {
+		r.Percent = maxPercentage
+	}
+
+	if r.Center {
+		r.Left = 0
+		r.Top = 0
+	}
+
+	if r.Left < minValue {
+		r.Left = minValue
+	}
+
+	if r.Top < minValue {
+		r.Top = minValue
+	}
+}
