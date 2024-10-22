@@ -100,3 +100,33 @@ func LineProp() properties.Line {
 	prop.MakeValid()
 	return prop
 }
+
+// BarcodeProp is responsible to give a valid properties.Barcode.
+func BarcodeProp() properties.Barcode {
+	prop := properties.Barcode{
+		Top:     10,
+		Left:    10,
+		Percent: 98,
+		Proportion: properties.Proportion{
+			Width:  16,
+			Height: 9,
+		},
+		Center: false,
+	}
+	prop.MakeValid()
+	return prop
+}
+
+// PageProp is responsible to give a valid properties.PageNumber.
+func PageProp() properties.PageNumber {
+	fontProp := FontProp()
+	prop := properties.PageNumber{
+		Pattern: "{current} / {total}",
+		Place:   properties.LeftBottom,
+		Family:  fontProp.Family,
+		Style:   fontProp.Style,
+		Size:    fontProp.Size,
+		Color:   fontProp.Color,
+	}
+	return prop
+}
