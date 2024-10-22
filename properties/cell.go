@@ -19,3 +19,33 @@ type Cell struct {
 	// LineStyle defines which line style will be applied to a cell.
 	LineStyle linestyle.LineStyle // Default: Solid
 }
+
+// ToMap adds the Cell fields to the map.
+func (c *Cell) ToMap() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+
+	m := make(map[string]interface{})
+	if c.BorderType != "" {
+		m["prop_border_type"] = c.BorderType
+	}
+
+	if c.BorderThickness != 0 {
+		m["prop_border_thickness"] = c.BorderThickness
+	}
+
+	if c.LineStyle != "" {
+		m["prop_border_line_style"] = c.LineStyle
+	}
+
+	if c.BackgroundColor != nil {
+		m["prop_background_color"] = c.BackgroundColor.ToString()
+	}
+
+	if c.BorderColor != nil {
+		m["prop_border_color"] = c.BorderColor.ToString()
+	}
+
+	return m
+}
