@@ -1,6 +1,7 @@
 package properties
 
 import (
+	"github.com/pchchv/bpdf/consts/align"
 	"github.com/pchchv/bpdf/consts/fontstyle"
 	"github.com/pchchv/bpdf/consts/linestyle"
 )
@@ -65,4 +66,32 @@ func (s *Signature) ToLineProp(offsetPercent float64) *Line {
 	}
 	line.MakeValid()
 	return line
+}
+
+// ToFontProp from Signature return a Font based on Signature.
+func (s *Signature) ToFontProp() *Font {
+	font := &Font{
+		Family: s.FontFamily,
+		Style:  s.FontStyle,
+		Size:   s.FontSize,
+		Color:  s.FontColor,
+	}
+	font.MakeValid(s.FontFamily)
+	return font
+}
+
+// ToTextProp from Signature return a Text based on Signature.
+func (s *Signature) ToTextProp(align align.Align, top float64, verticalPadding float64) *Text {
+	font := s.ToFontProp()
+	text := &Text{
+		Family:          font.Family,
+		Style:           font.Style,
+		Size:            font.Size,
+		Align:           align,
+		Top:             top,
+		VerticalPadding: verticalPadding,
+		Color:           font.Color,
+	}
+	text.MakeValid(font)
+	return text
 }
