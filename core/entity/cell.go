@@ -22,3 +22,13 @@ func (c Cell) Copy() Cell {
 		Height: c.Height,
 	}
 }
+
+// NewRootCell creates the main Cell.
+func NewRootCell(pageWidth, pageHeight float64, margins Margins) Cell {
+	return Cell{
+		X:      0,
+		Y:      0,
+		Width:  pageWidth - margins.Left - margins.Right,
+		Height: pageHeight - margins.Top - margins.Bottom,
+	}
+}
