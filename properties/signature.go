@@ -16,3 +16,53 @@ type Signature struct {
 	LineThickness float64
 	SafePadding   float64
 }
+
+// ToMap returns a map with the Signature fields.
+func (s *Signature) ToMap() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
+
+	m := make(map[string]interface{})
+	if s.FontFamily != "" {
+		m["prop_font_family"] = s.FontFamily
+	}
+
+	if s.FontStyle != "" {
+		m["prop_font_style"] = s.FontStyle
+	}
+
+	if s.FontSize != 0 {
+		m["prop_font_size"] = s.FontSize
+	}
+
+	if s.LineStyle != "" {
+		m["prop_line_style"] = s.LineStyle
+	}
+
+	if s.LineThickness != 0 {
+		m["prop_line_thickness"] = s.LineThickness
+	}
+
+	if s.FontColor != nil {
+		m["prop_font_color"] = s.FontColor.ToString()
+	}
+
+	if s.LineColor != nil {
+		m["prop_line_color"] = s.LineColor.ToString()
+	}
+
+	return m
+}
+
+// ToLineProp from Signature return a Line based on Signature.
+func (s *Signature) ToLineProp(offsetPercent float64) *Line {
+	line := &Line{
+		Color:         s.LineColor,
+		Style:         s.LineStyle,
+		Thickness:     s.LineThickness,
+		OffsetPercent: offsetPercent,
+	}
+	line.MakeValid()
+	return line
+}
