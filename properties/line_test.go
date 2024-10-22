@@ -5,6 +5,7 @@ import (
 
 	"github.com/pchchv/bpdf/consts/linestyle"
 	"github.com/pchchv/bpdf/consts/orientation"
+	"github.com/pchchv/bpdf/internal/fixture"
 	"github.com/pchchv/bpdf/properties"
 	"github.com/stretchr/testify/assert"
 )
@@ -71,5 +72,26 @@ func TestLine_MakeValid(t *testing.T) {
 		prop.MakeValid()
 
 		assert.Equal(t, 100.0, prop.SizePercent)
+	})
+}
+
+func TestLine_ToMap(t *testing.T) {
+	t.Run("when line is nil, should return nil", func(t *testing.T) {
+		var prop *properties.Line
+		m := prop.ToMap()
+
+		assert.Nil(t, m)
+	})
+
+	t.Run("when line is filled, should return map filled", func(t *testing.T) {
+		prop := fixture.LineProp()
+		m := prop.ToMap()
+
+		assert.Equal(t, "RGB(100, 50, 200)", m["prop_color"])
+		assert.Equal(t, linestyle.Dashed, m["prop_style"])
+		assert.Equal(t, 1.1, m["prop_thickness"])
+		assert.Equal(t, orientation.Vertical, m["prop_orientation"])
+		assert.Equal(t, 50.0, m["prop_offset_percent"])
+		assert.Equal(t, 20.0, m["prop_size_percent"])
 	})
 }
