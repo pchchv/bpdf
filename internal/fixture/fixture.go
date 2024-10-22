@@ -2,9 +2,12 @@ package fixture
 
 import (
 	"github.com/pchchv/bpdf/consts/align"
+	"github.com/pchchv/bpdf/consts/border"
 	"github.com/pchchv/bpdf/consts/breakline"
 	"github.com/pchchv/bpdf/consts/fontfamily"
 	"github.com/pchchv/bpdf/consts/fontstyle"
+	"github.com/pchchv/bpdf/consts/linestyle"
+	"github.com/pchchv/bpdf/consts/orientation"
 	"github.com/pchchv/bpdf/properties"
 )
 
@@ -60,5 +63,40 @@ func TextProp() properties.Text {
 		Hyperlink:         &google,
 	}
 	prop.MakeValid(&fontProp)
+	return prop
+}
+
+// CellProp is responsible to give a valid properties.Cell.
+func CellProp() properties.Cell {
+	prop := properties.Cell{
+		BackgroundColor: &properties.Color{
+			Red:   255,
+			Green: 100,
+			Blue:  50,
+		},
+		BorderColor: &properties.Color{
+			Red:   200,
+			Green: 80,
+			Blue:  60,
+		},
+		BorderType:      border.Left,
+		BorderThickness: 0.6,
+		LineStyle:       linestyle.Dashed,
+	}
+	return prop
+}
+
+// LineProp is responsible to give a valid properties.Line.
+func LineProp() properties.Line {
+	colorProp := ColorProp()
+	prop := properties.Line{
+		Color:         &colorProp,
+		Style:         linestyle.Dashed,
+		Thickness:     1.1,
+		Orientation:   orientation.Vertical,
+		OffsetPercent: 50,
+		SizePercent:   20,
+	}
+	prop.MakeValid()
 	return prop
 }
