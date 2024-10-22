@@ -95,3 +95,29 @@ func (s *Signature) ToTextProp(align align.Align, top float64, verticalPadding f
 	text.MakeValid(font)
 	return text
 }
+
+// MakeValid from Signature define default values for a Signature.
+func (s *Signature) MakeValid(defaultFontFamily string) {
+	if s.FontFamily == "" {
+		s.FontFamily = defaultFontFamily
+	}
+
+	if s.FontStyle == "" {
+		s.FontStyle = fontstyle.Bold
+	}
+
+	if s.FontSize == 0.0 {
+		s.FontSize = 8.0
+	}
+
+	if s.LineStyle == "" {
+		s.LineStyle = linestyle.Solid
+	}
+
+	if s.LineThickness == 0 {
+		s.LineThickness = linestyle.DefaultLineThickness
+	}
+	if s.SafePadding <= 0 {
+		s.SafePadding = 1.5
+	}
+}
