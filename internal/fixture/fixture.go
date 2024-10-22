@@ -130,3 +130,20 @@ func PageProp() properties.PageNumber {
 	}
 	return prop
 }
+
+// SignatureProp is responsible to give a valid properties.Signature.
+func SignatureProp() properties.Signature {
+	textProp := TextProp()
+	lineProp := LineProp()
+	prop := properties.Signature{
+		FontFamily:    textProp.Family,
+		FontStyle:     textProp.Style,
+		FontSize:      textProp.Size,
+		FontColor:     textProp.Color,
+		LineColor:     lineProp.Color,
+		LineStyle:     lineProp.Style,
+		LineThickness: lineProp.Thickness,
+	}
+	prop.MakeValid(textProp.Family)
+	return prop
+}
