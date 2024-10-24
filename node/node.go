@@ -74,3 +74,18 @@ func (n *Node[T]) IsRoot() bool {
 func (n *Node[T]) IsLeaf() bool {
 	return len(n.nexts) == 0
 }
+
+// Backtrack retrieves a path from node to root.
+func (n *Node[T]) Backtrack() (nodes []*Node[T]) {
+	for current := n; current != nil; {
+		nodes = append(nodes, current)
+		current = current.previous
+	}
+	return
+}
+
+// AddNext add node to current node.
+func (n *Node[T]) AddNext(node *Node[T]) {
+	node.previous = n
+	n.nexts = append(n.nexts, node)
+}
