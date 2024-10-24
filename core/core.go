@@ -39,3 +39,13 @@ type Row interface {
 	WithStyle(style *properties.Cell) Row
 	Render(provider Provider, cell entity.Cell)
 }
+
+// Page is the interface that wraps the basic methods of a page.
+type Page interface {
+	Node
+	Add(rows ...Row) Page
+	GetRows() []Row
+	GetNumber() int
+	SetNumber(number int, total int)
+	Render(provider Provider, cell entity.Cell)
+}
