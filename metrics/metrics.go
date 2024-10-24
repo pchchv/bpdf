@@ -79,3 +79,10 @@ func (t *Size) Normalize() bool {
 func (t *Size) String() string {
 	return fmt.Sprintf("%.2f%s", t.Value, t.Scale)
 }
+
+// TimeMetric is a time metric.
+type TimeMetric struct {
+	Key   string
+	Times []*Time
+	Avg   *Time
+}
