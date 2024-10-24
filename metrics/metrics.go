@@ -41,3 +41,9 @@ func (t *Time) Normalize() bool {
 func (t *Time) String() string {
 	return fmt.Sprintf("%.2f%s", t.Value, t.Scale)
 }
+
+// Size scales.
+type Size struct {
+	Value float64
+	Scale SizeScale
+}
