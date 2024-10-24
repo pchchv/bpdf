@@ -64,3 +64,13 @@ func (n *Node[T]) GetStructure() (structure []string) {
 
 	return
 }
+
+// IsRoot retrieves info if node is root.
+func (n *Node[T]) IsRoot() bool {
+	return n.previous == nil
+}
+
+// IsLeaf retrieves info if node is leaf.
+func (n *Node[T]) IsLeaf() bool {
+	return len(n.nexts) == 0
+}
