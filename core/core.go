@@ -29,3 +29,13 @@ type Col interface {
 	WithStyle(style *properties.Cell) Col
 	Render(provider Provider, cell entity.Cell, createCell bool)
 }
+
+// Row is the interface that wraps the basic methods of a row.
+type Row interface {
+	Node
+	Add(cols ...Col) Row
+	GetHeight(provider Provider, cell *entity.Cell) float64
+	GetColumns() []Col
+	WithStyle(style *properties.Cell) Row
+	Render(provider Provider, cell entity.Cell)
+}
