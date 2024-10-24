@@ -9,7 +9,9 @@ import (
 	"github.com/pchchv/bpdf/consts/fontstyle"
 	"github.com/pchchv/bpdf/consts/linestyle"
 	"github.com/pchchv/bpdf/consts/orientation"
+	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
+	"github.com/pchchv/bpdf/node"
 	"github.com/pchchv/bpdf/properties"
 )
 
@@ -188,4 +190,17 @@ func ImageEntity() entity.Image {
 		Bytes:     []byte{1, 2, 3},
 		Extension: extension.Png,
 	}
+}
+
+// Node is responsible to give a valid node.Node.
+func Node(rootType string) *node.Node[core.Structure] {
+	marotoNode := node.New[core.Structure](core.Structure{
+		Type: rootType,
+	})
+	pageNode := node.New[core.Structure](core.Structure{
+		Type: "page",
+	})
+
+	marotoNode.AddNext(pageNode)
+	return marotoNode
 }
