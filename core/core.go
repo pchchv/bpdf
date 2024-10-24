@@ -4,6 +4,7 @@ package core
 import (
 	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/node"
+	"github.com/pchchv/bpdf/properties"
 )
 
 // Node is the interface that wraps the basic methods of a node.
@@ -17,4 +18,14 @@ type Component interface {
 	Node
 	Render(provider Provider, cell *entity.Cell)
 	GetHeight(provider Provider, cell *entity.Cell) float64
+}
+
+// Col is the interface that wraps the basic methods of a col.
+type Col interface {
+	Node
+	Add(components ...Component) Col
+	GetSize() int
+	GetHeight(provider Provider, cell *entity.Cell) float64
+	WithStyle(style *properties.Cell) Col
+	Render(provider Provider, cell entity.Cell, createCell bool)
 }
