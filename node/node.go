@@ -14,3 +14,14 @@ func New[T any](data T) *Node[T] {
 		data: data,
 	}
 }
+
+// WithID retrieves data from node.
+func (n *Node[T]) WithID(id int) *Node[T] {
+	n.id = id
+	return n
+}
+
+// GetData retrieves data from node.
+func (n *Node[T]) GetData() T {
+	return n.data
+}
