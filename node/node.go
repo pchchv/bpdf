@@ -89,3 +89,20 @@ func (n *Node[T]) AddNext(node *Node[T]) {
 	node.previous = n
 	n.nexts = append(n.nexts, node)
 }
+
+// Filter remove all sub-nodes that doesn´t respect a rule.
+func (n *Node[T]) Filter(filterFunc func(obj T) bool) (*Node[T], bool) {
+	if !filterFunc(n.GetData()) {
+		return nil, false
+	}
+
+	newNode := New(n.GetData()).WithID(n.GetID())
+	for _, next := range n.nexts {
+		innerNode, ok := next.Filter(filterFunc)
+		if ok {
+			newNode.AddNext(innerNode)
+		}
+	}
+
+	return newNode, true
+}
