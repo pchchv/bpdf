@@ -8,6 +8,7 @@ import (
 	"github.com/pchchv/bpdf/consts/fontstyle"
 	"github.com/pchchv/bpdf/consts/linestyle"
 	"github.com/pchchv/bpdf/consts/orientation"
+	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/properties"
 )
 
@@ -146,4 +147,26 @@ func SignatureProp() properties.Signature {
 	}
 	prop.MakeValid(textProp.Family)
 	return prop
+}
+
+// ConfigEntity is responsible to give a valid entity.Config.
+func ConfigEntity() entity.Config {
+	return entity.Config{
+		Margins: &entity.Margins{
+			Left:   10,
+			Top:    10,
+			Right:  10,
+			Bottom: 10,
+		},
+	}
+}
+
+// CellEntity is responsible to give a valid entity.Cell.
+func CellEntity() entity.Cell {
+	return entity.Cell{
+		X:      10,
+		Y:      15,
+		Width:  100,
+		Height: 150,
+	}
 }
