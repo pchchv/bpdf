@@ -25,3 +25,18 @@ func (n *Node[T]) WithID(id int) *Node[T] {
 func (n *Node[T]) GetData() T {
 	return n.data
 }
+
+// GetID retrieves id from node.
+func (n *Node[T]) GetID() int {
+	return n.id
+}
+
+// GetPrevious retrieves the next nodes.
+func (n *Node[T]) GetPrevious() *Node[T] {
+	return n.previous
+}
+
+// GetNexts retrieves the next nodes.
+func (n *Node[T]) GetNexts() []*Node[T] {
+	return n.nexts
+}
