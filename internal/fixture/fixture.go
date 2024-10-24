@@ -4,6 +4,7 @@ import (
 	"github.com/pchchv/bpdf/consts/align"
 	"github.com/pchchv/bpdf/consts/border"
 	"github.com/pchchv/bpdf/consts/breakline"
+	"github.com/pchchv/bpdf/consts/extension"
 	"github.com/pchchv/bpdf/consts/fontfamily"
 	"github.com/pchchv/bpdf/consts/fontstyle"
 	"github.com/pchchv/bpdf/consts/linestyle"
@@ -168,5 +169,23 @@ func CellEntity() entity.Cell {
 		Y:      15,
 		Width:  100,
 		Height: 150,
+	}
+}
+
+// MarginsEntity is responsible to give a valid entity.Margins.
+func MarginsEntity() entity.Margins {
+	return entity.Margins{
+		Left:   10,
+		Top:    10,
+		Right:  10,
+		Bottom: 10,
+	}
+}
+
+// ImageEntity is responsible to give a valid entity.Image.
+func ImageEntity() entity.Image {
+	return entity.Image{
+		Bytes:     []byte{1, 2, 3},
+		Extension: extension.Png,
 	}
 }
