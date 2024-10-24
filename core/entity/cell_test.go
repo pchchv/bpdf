@@ -48,6 +48,7 @@ func TestCell_Copy(t *testing.T) {
 		copyCell.Y = 15
 		copyCell.Width = 90
 		copyCell.Height = 90
+		copyCell.GetDimensions()
 
 		assert.Equal(t, 10.0, cell.X)
 		assert.Equal(t, 10.0, cell.Y)
