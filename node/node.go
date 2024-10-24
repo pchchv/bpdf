@@ -1,5 +1,7 @@
 package node
 
+import "fmt"
+
 // Node is the base of Tree construction.
 type Node[T any] struct {
 	id       int
@@ -39,4 +41,26 @@ func (n *Node[T]) GetPrevious() *Node[T] {
 // GetNexts retrieves the next nodes.
 func (n *Node[T]) GetNexts() []*Node[T] {
 	return n.nexts
+}
+
+// GetStructure retrieves the node structure.
+func (n *Node[T]) GetStructure() (structure []string) {
+	var current string
+	if n.previous == nil {
+		current = fmt.Sprintf("(NULL) -> (%d)", n.id)
+	} else {
+		current = fmt.Sprintf("(%d) -> (%d)", n.previous.id, n.id)
+	}
+
+	if n.nexts != nil {
+		current += ", "
+	}
+
+	structure = append(structure, current)
+	for _, next := range n.nexts {
+		innerStructure := next.GetStructure()
+		structure = append(structure, innerStructure...)
+	}
+
+	return
 }
