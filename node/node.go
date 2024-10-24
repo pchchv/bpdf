@@ -7,3 +7,10 @@ type Node[T any] struct {
 	previous *Node[T]
 	nexts    []*Node[T]
 }
+
+// New creates a new node.
+func New[T any](data T) *Node[T] {
+	return &Node[T]{
+		data: data,
+	}
+}
