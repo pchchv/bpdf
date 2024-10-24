@@ -95,3 +95,34 @@ func (m *TimeMetric) hasGreaterThan1000(times []*Time) bool {
 	}
 	return false
 }
+
+// Normalize normalizes the time metric.
+func (m *TimeMetric) Normalize() {
+	greaterThan1000 := m.hasGreaterThan1000(m.Times)
+	if greaterThan1000 {
+		for _, time := range m.Times {
+			done := time.Normalize()
+			if !done {
+				return
+			}
+		}
+	}
+
+	if greaterThan1000 {
+		m.Normalize()
+	}
+}
+
+// String returns the time metric formatted.
+func (m *TimeMetric) String() (content string) {
+	content += m.Key + " -> avg: " + m.Avg.String() + ", executions: ["
+	for i, time := range m.Times {
+		content += time.String()
+		if i < len(m.Times)-1 {
+			content += ", "
+		}
+	}
+
+	content += "]"
+	return content
+}
