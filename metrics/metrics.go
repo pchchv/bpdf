@@ -86,3 +86,12 @@ type TimeMetric struct {
 	Times []*Time
 	Avg   *Time
 }
+
+func (m *TimeMetric) hasGreaterThan1000(times []*Time) bool {
+	for _, time := range times {
+		if time.Value > 1000.0 {
+			return true
+		}
+	}
+	return false
+}
