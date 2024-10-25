@@ -132,3 +132,18 @@ type SizeMetric struct {
 	Key  string
 	Size Size
 }
+
+// Normalize normalizes the size metric.
+func (s *SizeMetric) Normalize() {
+	if s.Size.Value < 1000.0 {
+		return
+	}
+
+	s.Size.Normalize()
+	s.Normalize()
+}
+
+// String returns the size metric formatted.
+func (s *SizeMetric) String() string {
+	return s.Key + " -> " + s.Size.String()
+}
