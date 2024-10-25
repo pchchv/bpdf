@@ -1,8 +1,22 @@
 package core
 
-import "github.com/pchchv/bpdf/metrics"
+import (
+	"encoding/base64"
+
+	"github.com/pchchv/bpdf/metrics"
+)
 
 type Pdf struct {
 	bytes  []byte
 	report *metrics.Report
+}
+
+// GetBytes returns the PDF bytes.
+func (p *Pdf) GetBytes() []byte {
+	return p.bytes
+}
+
+// GetBase64 returns the PDF bytes in base64.
+func (p *Pdf) GetBase64() string {
+	return base64.StdEncoding.EncodeToString(p.bytes)
 }
