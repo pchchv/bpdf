@@ -4,6 +4,8 @@ import (
 	"encoding/base64"
 	"os"
 
+	"github.com/pchchv/bpdf/internal/time"
+	"github.com/pchchv/bpdf/merge"
 	"github.com/pchchv/bpdf/metrics"
 )
 
@@ -30,6 +32,24 @@ func (p *Pdf) GetReport() *metrics.Report {
 // Save saves the PDF in a file.
 func (p *Pdf) Save(file string) error {
 	return os.WriteFile(file, p.bytes, os.ModePerm)
+}
+
+// Merge merges the PDF with another PDF.
+func (p *Pdf) Merge(bytes []byte) (err error) {
+	var mergedBytes []byte
+	timeSpent := time.GetTimeSpent(func() {
+		mergedBytes, err = merge.Bytes(p.bytes, bytes)
+	})
+	if err != nil {
+		return err
+	}
+
+	p.bytes = mergedBytes
+	if p.report != nil {
+		p.appendMetric(timeSpent)
+	}
+
+	return nil
 }
 
 func (p *Pdf) appendMetric(timeSpent *metrics.Time) {
