@@ -8,6 +8,20 @@ import (
 	"github.com/pchchv/bpdf/properties"
 )
 
+// BPDF is the interface that wraps the basic methods of bpdf.
+type BPDF interface {
+	RegisterHeader(rows ...Row) error
+	RegisterFooter(rows ...Row) error
+	AddRows(rows ...Row)
+	AddRow(rowHeight float64, cols ...Col) Row
+	AddAutoRow(cols ...Col) Row
+	FitlnCurrentPage(heightNewLine float64) bool
+	GetCurrentConfig() *entity.Config
+	AddPages(pages ...Page)
+	GetStructure() *node.Node[Structure]
+	Generate() (Document, error)
+}
+
 // Node is the interface that wraps the basic methods of a node.
 type Node interface {
 	SetConfig(config *entity.Config)
