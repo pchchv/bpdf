@@ -17,3 +17,7 @@ type Code interface {
 	GenDataMatrix(code string) (*entity.Image, error)
 	GenBar(code string, cell *entity.Cell, prop *properties.Barcode) (*entity.Image, error)
 }
+
+type Line interface {
+	Add(cell *entity.Cell, prop *properties.Line)
+}
