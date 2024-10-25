@@ -1,6 +1,7 @@
 package core
 
 import (
+	"github.com/pchchv/bpdf/consts/fontstyle"
 	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/properties"
 )
@@ -26,4 +27,19 @@ type Line interface {
 type Text interface {
 	Add(text string, cell *entity.Cell, textProp *properties.Text)
 	GetLinesQuantity(text string, textProp *properties.Text, colWidth float64) int
+}
+
+// Font is the abstraction which deals of how to set fontstyle configurations.
+type Font interface {
+	SetFamily(family string)
+	SetStyle(style fontstyle.Fontstyle)
+	SetSize(size float64)
+	SetFont(family string, style fontstyle.Fontstyle, size float64)
+	GetFamily() string
+	GetStyle() fontstyle.Fontstyle
+	GetSize() float64
+	GetFont() (string, fontstyle.Fontstyle, float64)
+	GetHeight(family string, style fontstyle.Fontstyle, size float64) float64
+	SetColor(color *properties.Color)
+	GetColor() *properties.Color
 }
