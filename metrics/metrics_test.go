@@ -54,3 +54,63 @@ func TestTime_String(t *testing.T) {
 
 	assert.Equal(t, "2000.00ms", s)
 }
+
+func TestSize_Normalize(t *testing.T) {
+	t.Run("when scale is byte, should divide by 1000 and change to kilo", func(t *testing.T) {
+		size := metrics.Size{
+			Value: 3000,
+			Scale: metrics.Byte,
+		}
+		ok := size.Normalize()
+
+		assert.True(t, ok)
+		assert.Equal(t, 3.0, size.Value)
+		assert.Equal(t, metrics.KiloByte, size.Scale)
+	})
+
+	t.Run("when scale is kilo, should divide by 1000 and change to mega", func(t *testing.T) {
+		size := metrics.Size{
+			Value: 3000,
+			Scale: metrics.KiloByte,
+		}
+		ok := size.Normalize()
+
+		assert.True(t, ok)
+		assert.Equal(t, 3.0, size.Value)
+		assert.Equal(t, metrics.MegaByte, size.Scale)
+	})
+
+	t.Run("when scale is mega, should divide by 1000 and change to giga", func(t *testing.T) {
+		size := metrics.Size{
+			Value: 3000,
+			Scale: metrics.MegaByte,
+		}
+		ok := size.Normalize()
+
+		assert.True(t, ok)
+		assert.Equal(t, 3.0, size.Value)
+		assert.Equal(t, metrics.GigaByte, size.Scale)
+	})
+
+	t.Run("when scale is giga, should return false", func(t *testing.T) {
+		size := metrics.Size{
+			Value: 3000,
+			Scale: metrics.GigaByte,
+		}
+		ok := size.Normalize()
+
+		assert.False(t, ok)
+		assert.Equal(t, 3000.0, size.Value)
+		assert.Equal(t, metrics.GigaByte, size.Scale)
+	})
+}
+
+func TestSize_String(t *testing.T) {
+	size := metrics.Size{
+		Value: 2000,
+		Scale: metrics.KiloByte,
+	}
+	s := size.String()
+
+	assert.Equal(t, "2000.00Kb", s)
+}
