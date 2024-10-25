@@ -147,3 +147,9 @@ func (s *SizeMetric) Normalize() {
 func (s *SizeMetric) String() string {
 	return s.Key + " -> " + s.Size.String()
 }
+
+// Report is a metrics report.
+type Report struct {
+	TimeMetrics []TimeMetric
+	SizeMetric  SizeMetric
+}
