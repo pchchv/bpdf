@@ -14,6 +14,14 @@ type Pdf struct {
 	report *metrics.Report
 }
 
+// NewPDF is responsible to create a new instance of PDF.
+func NewPDF(bytes []byte, report *metrics.Report) Document {
+	return &Pdf{
+		bytes:  bytes,
+		report: report,
+	}
+}
+
 // GetBytes returns the PDF bytes.
 func (p *Pdf) GetBytes() []byte {
 	return p.bytes
