@@ -187,3 +187,31 @@ func TestTimeMetric_String(t *testing.T) {
 
 	assert.Equal(t, "keyMetric -> avg: 20000.00ns, executions: [10000.00ns, 20000.00ns, 30000.00ns]", s)
 }
+
+func TestSizeMetric_Normalize(t *testing.T) {
+	sizeMetric := &metrics.SizeMetric{
+		Key: "keyMetric",
+		Size: metrics.Size{
+			Value: 2000,
+			Scale: metrics.Byte,
+		},
+	}
+	sizeMetric.Normalize()
+
+	assert.Equal(t, "keyMetric", sizeMetric.Key)
+	assert.Equal(t, 2.0, sizeMetric.Size.Value)
+	assert.Equal(t, metrics.KiloByte, sizeMetric.Size.Scale)
+}
+
+func TestSizeMetric_String(t *testing.T) {
+	sizeMetric := &metrics.SizeMetric{
+		Key: "keyMetric",
+		Size: metrics.Size{
+			Value: 2000,
+			Scale: metrics.Byte,
+		},
+	}
+	s := sizeMetric.String()
+
+	assert.Equal(t, "keyMetric -> 2000.00b", s)
+}
