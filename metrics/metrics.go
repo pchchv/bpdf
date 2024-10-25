@@ -126,3 +126,9 @@ func (m *TimeMetric) String() (content string) {
 	content += "]"
 	return content
 }
+
+// SizeMetric is a size metric.
+type SizeMetric struct {
+	Key  string
+	Size Size
+}
