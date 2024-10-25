@@ -1,7 +1,10 @@
 // Package metrics contains metrics models, constants and formatting.
 package metrics
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 const (
 	Nano     TimeScale = "ns" // time scale in nanoseconds
@@ -171,4 +174,27 @@ func (r *Report) String() (content string) {
 		content += metric.String()
 	}
 	return content
+}
+
+// Save saves the report in a file.
+func (r *Report) Save(file string) error {
+	var content string
+	for _, metric := range r.TimeMetrics {
+		content += metric.String() + "\n"
+	}
+	content += r.SizeMetric.String() + "\n"
+
+	f, err := os.Create(file)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		_ = f.Close()
+	}()
+
+	if _, err = f.WriteString(content); err != nil {
+		return err
+	}
+
+	return nil
 }
