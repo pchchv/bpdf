@@ -3,6 +3,7 @@ package core
 
 import (
 	"github.com/pchchv/bpdf/core/entity"
+	"github.com/pchchv/bpdf/metrics"
 	"github.com/pchchv/bpdf/node"
 	"github.com/pchchv/bpdf/properties"
 )
@@ -48,4 +49,13 @@ type Page interface {
 	GetNumber() int
 	SetNumber(number int, total int)
 	Render(provider Provider, cell entity.Cell)
+}
+
+// Document is the interface that wraps the basic methods of a document.
+type Document interface {
+	GetBytes() []byte
+	GetBase64() string
+	Save(file string) error
+	GetReport() *metrics.Report
+	Merge([]byte) error
 }
