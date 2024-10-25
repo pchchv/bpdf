@@ -1,6 +1,9 @@
 package core
 
 import (
+	"github.com/google/uuid"
+	"github.com/jung-kurt/gofpdf"
+	"github.com/pchchv/bpdf/consts/extension"
 	"github.com/pchchv/bpdf/consts/fontstyle"
 	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/properties"
@@ -42,4 +45,10 @@ type Font interface {
 	GetHeight(family string, style fontstyle.Fontstyle, size float64) float64
 	SetColor(color *properties.Color)
 	GetColor() *properties.Color
+}
+
+// Image is the abstraction which deals of how to add images in a PDF.
+type Image interface {
+	Add(img *entity.Image, cell *entity.Cell, margins *entity.Margins, prop *properties.Rect, extension extension.Extension, flow bool) error
+	GetImageInfo(img *entity.Image, extension extension.Extension) (*gofpdf.ImageInfoType, uuid.UUID)
 }
