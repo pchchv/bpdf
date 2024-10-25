@@ -31,3 +31,21 @@ func (p *Pdf) GetReport() *metrics.Report {
 func (p *Pdf) Save(file string) error {
 	return os.WriteFile(file, p.bytes, os.ModePerm)
 }
+
+func (p *Pdf) appendMetric(timeSpent *metrics.Time) {
+	timeMetric := metrics.TimeMetric{
+		Key:   "merge_pdf",
+		Times: []*metrics.Time{timeSpent},
+		Avg:   timeSpent,
+	}
+	timeMetric.Normalize()
+	p.report.TimeMetrics = append(p.report.TimeMetrics, timeMetric)
+	p.report.SizeMetric = metrics.SizeMetric{
+		Key: "file_size",
+		Size: metrics.Size{
+			Value: float64(len(p.bytes)),
+			Scale: metrics.Byte,
+		},
+	}
+	p.report.Normalize()
+}
