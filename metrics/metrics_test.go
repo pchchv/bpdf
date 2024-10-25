@@ -114,3 +114,76 @@ func TestSize_String(t *testing.T) {
 
 	assert.Equal(t, "2000.00Kb", s)
 }
+
+func TestTimeMetric_Normalize(t *testing.T) {
+	arr := []*metrics.Time{
+		{
+			Value: 10000,
+			Scale: metrics.Nano,
+		},
+		{
+			Value: 20000,
+			Scale: metrics.Nano,
+		},
+		{
+			Value: 30000,
+			Scale: metrics.Nano,
+		},
+	}
+
+	sum := 0.0
+	for _, t := range arr {
+		sum += t.Value
+	}
+	avg := sum / float64(len(arr))
+	timeMetric := &metrics.TimeMetric{
+		Key:   "keyMetric",
+		Times: arr,
+		Avg: &metrics.Time{
+			Value: avg,
+			Scale: metrics.Nano,
+		},
+	}
+
+	timeMetric.Normalize()
+
+	assert.Equal(t, 10.0, timeMetric.Times[0].Value)
+	assert.Equal(t, metrics.Micro, timeMetric.Times[0].Scale)
+	assert.Equal(t, 20.0, timeMetric.Times[1].Value)
+	assert.Equal(t, metrics.Micro, timeMetric.Times[1].Scale)
+	assert.Equal(t, 30.0, timeMetric.Times[2].Value)
+	assert.Equal(t, metrics.Micro, timeMetric.Times[2].Scale)
+}
+
+func TestTimeMetric_String(t *testing.T) {
+	arr := []*metrics.Time{
+		{
+			Value: 10000,
+			Scale: metrics.Nano,
+		},
+		{
+			Value: 20000,
+			Scale: metrics.Nano,
+		},
+		{
+			Value: 30000,
+			Scale: metrics.Nano,
+		},
+	}
+	sum := 0.0
+	for _, t := range arr {
+		sum += t.Value
+	}
+	avg := sum / float64(len(arr))
+	timeMetric := &metrics.TimeMetric{
+		Key:   "keyMetric",
+		Times: arr,
+		Avg: &metrics.Time{
+			Value: avg,
+			Scale: metrics.Nano,
+		},
+	}
+	s := timeMetric.String()
+
+	assert.Equal(t, "keyMetric -> avg: 20000.00ns, executions: [10000.00ns, 20000.00ns, 30000.00ns]", s)
+}
