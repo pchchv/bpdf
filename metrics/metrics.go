@@ -153,3 +153,22 @@ type Report struct {
 	TimeMetrics []TimeMetric
 	SizeMetric  SizeMetric
 }
+
+// Normalize normalizes the report.
+func (r *Report) Normalize() *Report {
+	for _, metric := range r.TimeMetrics {
+		metric.Normalize()
+	}
+
+	r.SizeMetric.Normalize()
+
+	return r
+}
+
+// String returns the report formatted.
+func (r *Report) String() (content string) {
+	for _, metric := range r.TimeMetrics {
+		content += metric.String()
+	}
+	return content
+}
