@@ -49,3 +49,13 @@ func TestCache_AddImage(t *testing.T) {
 		assert.Nil(t, err)
 	})
 }
+
+func buildPath(file string) (dir string) {
+	var err error
+	if dir, err = os.Getwd(); err != nil {
+		return ""
+	}
+
+	dir = strings.ReplaceAll(dir, "internal/cache", "")
+	return path.Join(dir, file)
+}
