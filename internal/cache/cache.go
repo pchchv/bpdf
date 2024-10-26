@@ -15,6 +15,14 @@ type Cache interface {
 	AddImage(value string, image *entity.Image)
 }
 
+// New is responsible to create a new Cache.
+func New() Cache {
+	return &cache{
+		images: make(map[string]*entity.Image),
+		codes:  make(map[string][]byte),
+	}
+}
+
 type cache struct {
 	images map[string]*entity.Image
 	codes  map[string][]byte
