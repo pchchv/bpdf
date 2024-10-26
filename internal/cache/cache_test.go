@@ -53,6 +53,26 @@ func TestCache_AddImage(t *testing.T) {
 	})
 }
 
+func TestCache_LoadImage(t *testing.T) {
+	t.Run("when cannot find image, should return error", func(t *testing.T) {
+		sut := cache.New()
+		err := sut.LoadImage("image", extension.Jpg)
+
+		assert.NotNil(t, err)
+	})
+
+	t.Run("when can find image, should not return error and find image", func(t *testing.T) {
+		sut := cache.New()
+
+		err := sut.LoadImage(buildPath("/docs/assets/images/biplane.jpg"), extension.Jpg)
+
+		assert.Nil(t, err)
+		img, err := sut.GetImage(buildPath("/docs/assets/images/biplane.jpg"), extension.Jpg)
+		assert.Nil(t, err)
+		assert.NotNil(t, img)
+	})
+}
+
 func buildPath(file string) (dir string) {
 	var err error
 	if dir, err = os.Getwd(); err != nil {
