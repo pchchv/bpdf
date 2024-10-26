@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/pchchv/bpdf/core"
+	"github.com/pchchv/bpdf/metrics"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -27,4 +28,17 @@ func TestPdf_GetBytes(t *testing.T) {
 	bytes := sut.GetBytes()
 
 	assert.Equal(t, []byte{1, 2, 3}, bytes)
+}
+
+func TestPdf_GetReport(t *testing.T) {
+	sut := core.NewPDF(nil, &metrics.Report{SizeMetric: metrics.SizeMetric{
+		Key: "key",
+		Size: metrics.Size{
+			Value: 10.0,
+			Scale: metrics.Byte,
+		},
+	}})
+	report := sut.GetReport()
+
+	assert.Equal(t, "key", report.SizeMetric.Key)
 }
