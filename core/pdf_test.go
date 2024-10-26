@@ -46,6 +46,27 @@ func TestPdf_GetReport(t *testing.T) {
 	assert.Equal(t, "key", report.SizeMetric.Key)
 }
 
+func TestPdf_Save(t *testing.T) {
+	t.Run("when cannot save, should return error", func(t *testing.T) {
+		sut := core.NewPDF(nil, nil)
+		err := sut.Save("")
+
+		assert.NotNil(t, err)
+	})
+
+	t.Run("when can save, should not return error", func(t *testing.T) {
+		bytes := []byte{1, 2, 3}
+		file := buildPath("test.txt")
+		sut := core.NewPDF(bytes, nil)
+		err := sut.Save(file)
+
+		assert.Nil(t, err)
+		savedBytes, _ := os.ReadFile(file)
+		assert.Equal(t, bytes, savedBytes)
+		_ = os.Remove(file)
+	})
+}
+
 func buildPath(file string) (dir string) {
 	var err error
 	if dir, err = os.Getwd(); err != nil {
