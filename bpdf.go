@@ -7,7 +7,7 @@ import (
 	"github.com/pchchv/bpdf/internal/cache"
 )
 
-type bpdf struct {
+type Bpdf struct {
 	config   *entity.Config
 	provider core.Provider
 	cache    cache.Cache
