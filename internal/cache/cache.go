@@ -8,6 +8,13 @@ import (
 	"github.com/pchchv/bpdf/core/entity"
 )
 
+// Cache is the interface to cache images.
+type Cache interface {
+	GetImage(value string, extension extension.Extension) (*entity.Image, error)
+	LoadImage(value string, extension extension.Extension) error
+	AddImage(value string, image *entity.Image)
+}
+
 type cache struct {
 	images map[string]*entity.Image
 	codes  map[string][]byte
