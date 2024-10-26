@@ -2,6 +2,9 @@ package cache_test
 
 import (
 	"fmt"
+	"os"
+	"path"
+	"strings"
 	"testing"
 
 	"github.com/pchchv/bpdf/consts/extension"
