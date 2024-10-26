@@ -1,6 +1,11 @@
 package cache
 
-import "github.com/pchchv/bpdf/core/entity"
+import (
+	"os"
+
+	"github.com/pchchv/bpdf/consts/extension"
+	"github.com/pchchv/bpdf/core/entity"
+)
 
 type cache struct {
 	images map[string]*entity.Image
