@@ -2,6 +2,9 @@ package core_test
 
 import (
 	"fmt"
+	"os"
+	"path"
+	"strings"
 	"testing"
 
 	"github.com/pchchv/bpdf/core"
@@ -41,4 +44,14 @@ func TestPdf_GetReport(t *testing.T) {
 	report := sut.GetReport()
 
 	assert.Equal(t, "key", report.SizeMetric.Key)
+}
+
+func buildPath(file string) (dir string) {
+	var err error
+	if dir, err = os.Getwd(); err != nil {
+		return ""
+	}
+
+	dir = strings.ReplaceAll(dir, "pkg/core/entity", "")
+	return path.Join(dir, file)
 }
