@@ -1,6 +1,7 @@
 package cellwriter
 
 import (
+	"github.com/pchchv/bpdf/consts/border"
 	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/internal/providers/gofpdf/fpdfwrapper"
 	"github.com/pchchv/bpdf/properties"
@@ -26,4 +27,19 @@ func NewCellWriter(fpdf fpdfwrapper.Fpdf) *cellWriter {
 		},
 		defaultColor: &properties.BlackColor,
 	}
+}
+
+func (c *cellWriter) Apply(width, height float64, config *entity.Config, prop *properties.Cell) {
+	bd := border.None
+	fill := false
+	if prop != nil {
+		bd = prop.BorderType
+		fill = prop.BackgroundColor != nil
+	}
+
+	if config.Debug {
+		bd = border.Full
+	}
+
+	c.fpdf.CellFormat(width, height, "", string(bd), 0, "C", fill, 0, "")
 }
