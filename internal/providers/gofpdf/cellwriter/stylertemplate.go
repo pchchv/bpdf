@@ -7,3 +7,11 @@ type stylerTemplate struct {
 	fpdf fpdfwrapper.Fpdf
 	name string
 }
+
+func (s *stylerTemplate) GetName() string {
+	return s.name
+}
+
+func (s *stylerTemplate) GetNext() CellWriter {
+	return s.next
+}
