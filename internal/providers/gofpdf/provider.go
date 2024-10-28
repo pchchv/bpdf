@@ -3,6 +3,7 @@ package gofpdf
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"path/filepath"
 	"strings"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/internal/cache"
+	merror "github.com/pchchv/bpdf/internal/error"
 	"github.com/pchchv/bpdf/internal/providers/gofpdf/cellwriter"
 	"github.com/pchchv/bpdf/internal/providers/gofpdf/fpdfwrapper"
 	"github.com/pchchv/bpdf/properties"
@@ -42,6 +44,48 @@ func (g *provider) AddText(text string, cell *entity.Cell, prop *properties.Text
 
 func (g *provider) AddLine(cell *entity.Cell, prop *properties.Line) {
 	g.line.Add(cell, prop)
+}
+
+func (g *provider) AddMatrixCode(code string, cell *entity.Cell, prop *properties.Rect) {
+	img, err := g.loadCode(code, "matrix-code-", g.code.GenDataMatrix)
+	if err != nil {
+		g.text.Add("could not generate matrixcode", cell, merror.DefaultErrorText)
+		return
+	}
+
+	if err = g.image.Add(img, cell, g.cfg.Margins, prop, extension.Png, false); err != nil {
+		g.fpdf.ClearError()
+		g.text.Add("could not add matrixcode to document", cell, merror.DefaultErrorText)
+	}
+}
+
+func (g *provider) AddQrCode(code string, cell *entity.Cell, prop *properties.Rect) {
+	img, err := g.loadCode(code, "qr-code-", g.code.GenQr)
+	if err != nil {
+		g.text.Add("could not generate qrcode", cell, merror.DefaultErrorText)
+		return
+	}
+
+	if err = g.image.Add(img, cell, g.cfg.Margins, prop, extension.Png, false); err != nil {
+		g.fpdf.ClearError()
+		g.text.Add("could not add qrcode to document", cell, merror.DefaultErrorText)
+	}
+}
+
+func (g *provider) AddBarCode(code string, cell *entity.Cell, prop *properties.Barcode) {
+	image, err := g.cache.GetImage(g.getBarcodeImageName(fmt.Sprintf("bar-code-%s", code), prop), extension.Png)
+	if err != nil {
+		if image, err = g.code.GenBar(code, cell, prop); err != nil {
+			g.text.Add("could not generate barcode", cell, merror.DefaultErrorText)
+			return
+		}
+	}
+
+	g.cache.AddImage(g.getBarcodeImageName(fmt.Sprintf("bar-code-%s", code), prop), image)
+	if err = g.image.Add(image, cell, g.cfg.Margins, prop.ToRectProp(), extension.Png, false); err != nil {
+		g.fpdf.ClearError()
+		g.text.Add("could not add barcode to document", cell, merror.DefaultErrorText)
+	}
 }
 
 func (g *provider) CreateRow(height float64) {
