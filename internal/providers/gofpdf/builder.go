@@ -27,3 +27,8 @@ type Builder interface {
 }
 
 type builder struct{}
+
+// NewBuilder create a new Builder
+func NewBuilder() *builder {
+	return &builder{}
+}
