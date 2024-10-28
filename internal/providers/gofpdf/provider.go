@@ -88,6 +88,45 @@ func (g *provider) AddBarCode(code string, cell *entity.Cell, prop *properties.B
 	}
 }
 
+func (g *provider) AddImageFromBytes(bytes []byte, cell *entity.Cell, prop *properties.Rect, extension extension.Extension) {
+	img, err := FromBytes(bytes, extension)
+	if err != nil {
+		g.text.Add("could not parse image bytes", cell, merror.DefaultErrorText)
+		return
+	}
+
+	if err = g.image.Add(img, cell, g.cfg.Margins, prop, extension, false); err != nil {
+		g.fpdf.ClearError()
+		g.text.Add("could not add image to document", cell, merror.DefaultErrorText)
+	}
+}
+
+func (g *provider) AddImageFromFile(file string, cell *entity.Cell, prop *properties.Rect) {
+	extensionStr := strings.ToLower(strings.TrimPrefix(filepath.Ext(file), "."))
+	image, err := g.loadImage(file, extensionStr)
+	if err != nil {
+		g.text.Add("could not load image", cell, merror.DefaultErrorText)
+		return
+	}
+
+	g.AddImageFromBytes(image.Bytes, cell, prop, extension.Extension(extensionStr))
+}
+
+func (g *provider) AddBackgroundImageFromBytes(bytes []byte, cell *entity.Cell, prop *properties.Rect, extension extension.Extension) {
+	img, err := FromBytes(bytes, extension)
+	if err != nil {
+		g.text.Add("could not parse image bytes", cell, merror.DefaultErrorText)
+		return
+	}
+
+	if err = g.image.Add(img, cell, g.cfg.Margins, prop, extension, true); err != nil {
+		g.fpdf.ClearError()
+		g.text.Add("could not add image to document", cell, merror.DefaultErrorText)
+	}
+
+	g.fpdf.SetHomeXY()
+}
+
 func (g *provider) CreateRow(height float64) {
 	g.fpdf.Ln(height)
 }
