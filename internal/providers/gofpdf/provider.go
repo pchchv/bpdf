@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/pchchv/bpdf/consts/barcode"
 	"github.com/pchchv/bpdf/consts/extension"
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
@@ -163,6 +164,30 @@ func (g *provider) GetDimensionsByQrCode(code string) (*entity.Dimensions, error
 func (g *provider) GenerateBytes() ([]byte, error) {
 	var buffer bytes.Buffer
 	return buffer.Bytes(), g.fpdf.Output(&buffer)
+}
+
+// GetDimensionsByImageByte is responsible for obtaining the dimensions of an image
+// If the image cannot be loaded, an error is returned
+func (g *provider) GetDimensionsByImageByte(bytes []byte, extension extension.Extension) (*entity.Dimensions, error) {
+	img, err := FromBytes(bytes, extension)
+	if err != nil {
+		return nil, err
+	}
+
+	imgInfo, _ := g.image.GetImageInfo(img, extension)
+	if imgInfo == nil {
+		return nil, errors.New("could not read image options, maybe path/name is wrong")
+	}
+
+	return &entity.Dimensions{Width: imgInfo.Width(), Height: imgInfo.Height()}, nil
+}
+
+func (g *provider) getBarcodeImageName(code string, prop *properties.Barcode) string {
+	if prop == nil {
+		return code + string(barcode.Code128)
+	}
+
+	return code + string(prop.Type)
 }
 
 // loadImage is responsible for loading an codes
