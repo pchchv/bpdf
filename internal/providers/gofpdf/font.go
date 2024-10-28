@@ -56,3 +56,23 @@ func (s *font) GetColor() *properties.Color {
 func (s *font) GetFont() (string, fontstyle.Fontstyle, float64) {
 	return s.family, s.style, s.size
 }
+
+func (s *font) GetHeight(family string, style fontstyle.Fontstyle, size float64) float64 {
+	s.SetFont(family, style, size)
+	_, _, fontSize := s.GetFont()
+	return fontSize / s.scaleFactor
+}
+
+// SetFont defines all new Font properties.
+func (s *font) SetFont(family string, style fontstyle.Fontstyle, size float64) {
+	s.family = family
+	s.style = style
+	s.size = size
+	s.pdf.SetFont(s.family, string(s.style), s.size)
+}
+
+// SetFamily defines a new Font family.
+func (s *font) SetFamily(family string) {
+	s.family = family
+	s.pdf.SetFont(s.family, string(s.style), s.size)
+}
