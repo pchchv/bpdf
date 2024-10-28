@@ -32,3 +32,18 @@ func NewFont(pdf fpdfwrapper.Fpdf, size float64, family string, style fontstyle.
 		fontColor:   &properties.Color{Red: 0, Green: 0, Blue: 0},
 	}
 }
+
+// GetFamily return the currently Font family configured.
+func (s *font) GetFamily() string {
+	return s.family
+}
+
+// GetStyle return the currently Font style configured.
+func (s *font) GetStyle() fontstyle.Fontstyle {
+	return s.style
+}
+
+// GetSize return the currently Font size configured.
+func (s *font) GetSize() float64 {
+	return s.size
+}
