@@ -20,3 +20,8 @@ type Dependencies struct {
 	CellWriter cellwriter.CellWriter
 	Cfg        *entity.Config
 }
+
+// Builder is the dependencies builder for gofpdf
+type Builder interface {
+	Build(cfg *entity.Config, cache cache.Cache) *Dependencies
+}
