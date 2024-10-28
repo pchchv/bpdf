@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/jung-kurt/gofpdf"
-	"github.com/pchchv/bpdf/internal/providers/fpdfwrapper"
+	"github.com/pchchv/bpdf/internal/providers/gofpdf/fpdfwrapper"
 	"github.com/stretchr/testify/assert"
 )
 
