@@ -84,3 +84,34 @@ func TestFont_SetSize(t *testing.T) {
 
 	assert.Equal(t, 14.0, font.GetSize())
 }
+
+func TestFont_SetColor(t *testing.T) {
+	t.Run("when color is invalid, should not apply color", func(t *testing.T) {
+		size := 10.0
+		family := fontfamily.Arial
+		style := fontstyle.Bold
+		fpdf := mocks.NewFpdf(t)
+		fpdf.EXPECT().SetFont(family, string(style), size)
+		font := gofpdf.NewFont(fpdf, size, family, style)
+		color := &properties.Color{Red: 0, Green: 0, Blue: 0}
+
+		font.SetColor(nil)
+
+		assert.Equal(t, color, font.GetColor())
+	})
+
+	t.Run("when color is valid, should apply color", func(t *testing.T) {
+		size := 10.0
+		family := fontfamily.Arial
+		style := fontstyle.Bold
+		fpdf := mocks.NewFpdf(t)
+		fpdf.EXPECT().SetFont(family, string(style), size)
+		fpdf.EXPECT().SetTextColor(200, 200, 200)
+		font := gofpdf.NewFont(fpdf, size, family, style)
+		color := &properties.Color{Red: 200, Green: 200, Blue: 200}
+
+		font.SetColor(color)
+
+		assert.Equal(t, color, font.GetColor())
+	})
+}
