@@ -57,6 +57,14 @@ func (g *provider) AddLine(cell *entity.Cell, prop *properties.Line) {
 	g.line.Add(cell, prop)
 }
 
+func (g *provider) CreateRow(height float64) {
+	g.fpdf.Ln(height)
+}
+
+func (g *provider) CreateCol(width, height float64, config *entity.Config, prop *properties.Cell) {
+	g.cellWriter.Apply(width, height, config, prop)
+}
+
 // loadImage is responsible for loading an codes
 func (g *provider) loadCode(code, codeType string, generate func(code string) (*entity.Image, error)) (*entity.Image, error) {
 	image, err := g.cache.GetImage(codeType+code, extension.Png)
