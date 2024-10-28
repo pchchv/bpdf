@@ -16,25 +16,6 @@ import (
 	"github.com/pchchv/bpdf/properties"
 )
 
-// import (
-// 	"bytes"
-// 	"errors"
-// 	"fmt"
-// 	"path/filepath"
-// 	"strings"
-
-// 	"github.com/johnfercher/maroto/v2/pkg/consts/barcode"
-
-// 	"github.com/johnfercher/maroto/v2/internal/cache"
-// 	"github.com/johnfercher/maroto/v2/internal/merror"
-// 	"github.com/johnfercher/maroto/v2/internal/providers/gofpdf/cellwriter"
-// 	"github.com/johnfercher/maroto/v2/internal/providers/gofpdf/fpdfwrapper"
-// 	"github.com/johnfercher/maroto/v2/pkg/consts/extension"
-// 	"github.com/johnfercher/maroto/v2/pkg/core"
-// 	"github.com/johnfercher/maroto/v2/pkg/core/entity"
-// 	"github.com/johnfercher/maroto/v2/pkg/props"
-// )
-
 type provider struct {
 	fpdf       fpdfwrapper.Fpdf
 	font       core.Font
