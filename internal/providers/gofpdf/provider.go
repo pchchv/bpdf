@@ -1,6 +1,7 @@
 package gofpdf
 
 import (
+	"bytes"
 	"errors"
 	"path/filepath"
 	"strings"
@@ -141,6 +142,27 @@ func (g *provider) GetDimensionsByMatrixCode(code string) (*entity.Dimensions, e
 	}
 
 	return &entity.Dimensions{Width: imgInfo.Width(), Height: imgInfo.Height()}, nil
+}
+
+// GetDimensionsByQrCode is responsible for obtaining the dimensions of an QrCode
+// If the image cannot be loaded, an error is returned
+func (g *provider) GetDimensionsByQrCode(code string) (*entity.Dimensions, error) {
+	img, err := g.loadCode(code, "qr-code-", g.code.GenQr)
+	if err != nil {
+		return nil, err
+	}
+
+	imgInfo, _ := g.image.GetImageInfo(img, extension.Png)
+	if imgInfo == nil {
+		return nil, errors.New("could not read image options, maybe path/name is wrong")
+	}
+
+	return &entity.Dimensions{Width: imgInfo.Width(), Height: imgInfo.Height()}, nil
+}
+
+func (g *provider) GenerateBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	return buffer.Bytes(), g.fpdf.Output(&buffer)
 }
 
 // loadImage is responsible for loading an codes
