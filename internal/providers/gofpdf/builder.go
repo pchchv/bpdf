@@ -25,3 +25,5 @@ type Dependencies struct {
 type Builder interface {
 	Build(cfg *entity.Config, cache cache.Cache) *Dependencies
 }
+
+type builder struct{}
