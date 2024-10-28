@@ -30,6 +30,21 @@ type provider struct {
 	cfg        *entity.Config
 }
 
+// New is the constructor of provider for gofpdf
+func New(dep *Dependencies) core.Provider {
+	return &provider{
+		fpdf:       dep.Fpdf,
+		font:       dep.Font,
+		text:       dep.Text,
+		code:       dep.Code,
+		image:      dep.Image,
+		line:       dep.Line,
+		cellWriter: dep.CellWriter,
+		cfg:        dep.Cfg,
+		cache:      dep.Cache,
+	}
+}
+
 func (g *provider) GetLinesQuantity(text string, textProp *properties.Text, colWidth float64) int {
 	return g.text.GetLinesQuantity(text, textProp, colWidth)
 }
