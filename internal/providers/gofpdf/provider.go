@@ -1,6 +1,10 @@
 package gofpdf
 
 import (
+	"errors"
+	"path/filepath"
+	"strings"
+
 	"github.com/pchchv/bpdf/consts/extension"
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
@@ -104,6 +108,39 @@ func (g *provider) SetMetadata(metadata *entity.Metadata) {
 
 func (g *provider) SetCompression(compression bool) {
 	g.fpdf.SetCompression(compression)
+}
+
+// GetDimensionsByImage is responsible for obtaining the dimensions of an image.
+// If the image cannot be loaded, an error is returned.
+func (g *provider) GetDimensionsByImage(file string) (*entity.Dimensions, error) {
+	extensionStr := strings.ToLower(strings.TrimPrefix(filepath.Ext(file), "."))
+	img, err := g.loadImage(file, extensionStr)
+	if err != nil {
+		return nil, err
+	}
+
+	imgInfo, _ := g.image.GetImageInfo(img, extension.Extension(extensionStr))
+	if imgInfo == nil {
+		return nil, errors.New("could not read image options, maybe path/name is wrong")
+	}
+
+	return &entity.Dimensions{Width: imgInfo.Width(), Height: imgInfo.Height()}, nil
+}
+
+// GetDimensionsByMatrixCode is responsible for obtaining the dimensions of an MatrixCode.
+// If the image cannot be loaded, an error is returned.
+func (g *provider) GetDimensionsByMatrixCode(code string) (*entity.Dimensions, error) {
+	img, err := g.loadCode(code, "matrix-code-", g.code.GenDataMatrix)
+	if err != nil {
+		return nil, err
+	}
+
+	imgInfo, _ := g.image.GetImageInfo(img, extension.Png)
+	if imgInfo == nil {
+		return nil, errors.New("could not read image options, maybe path/name is wrong")
+	}
+
+	return &entity.Dimensions{Width: imgInfo.Width(), Height: imgInfo.Height()}, nil
 }
 
 // loadImage is responsible for loading an codes
