@@ -47,3 +47,12 @@ func (s *font) GetStyle() fontstyle.Fontstyle {
 func (s *font) GetSize() float64 {
 	return s.size
 }
+
+func (s *font) GetColor() *properties.Color {
+	return s.fontColor
+}
+
+// GetFont return all the currently Font properties configured.
+func (s *font) GetFont() (string, fontstyle.Fontstyle, float64) {
+	return s.family, s.style, s.size
+}
