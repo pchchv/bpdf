@@ -76,3 +76,24 @@ func (s *font) SetFamily(family string) {
 	s.family = family
 	s.pdf.SetFont(s.family, string(s.style), s.size)
 }
+
+// SetStyle defines a new Font style.
+func (s *font) SetStyle(style fontstyle.Fontstyle) {
+	s.style = style
+	s.pdf.SetFontStyle(string(s.style))
+}
+
+// SetSize defines a new Font size.
+func (s *font) SetSize(size float64) {
+	s.size = size
+	s.pdf.SetFontSize(s.size)
+}
+
+func (s *font) SetColor(color *properties.Color) {
+	if color == nil {
+		return
+	}
+
+	s.fontColor = color
+	s.pdf.SetTextColor(color.Red, color.Green, color.Blue)
+}
