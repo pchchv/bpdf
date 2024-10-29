@@ -6,6 +6,8 @@ toolchain go1.22.8
 
 require github.com/stretchr/testify v1.9.0
 
+require github.com/stretchr/objx v0.5.2 // indirect
+
 require (
 	github.com/hhrutter/lzw v1.0.0 // indirect
 	github.com/hhrutter/tiff v1.0.1 // indirect
