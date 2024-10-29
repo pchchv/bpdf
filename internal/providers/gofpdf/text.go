@@ -6,6 +6,7 @@ import (
 	"unicode"
 
 	"github.com/pchchv/bpdf/consts/align"
+	"github.com/pchchv/bpdf/consts/breakline"
 	"github.com/pchchv/bpdf/consts/fontfamily"
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/internal/providers/gofpdf/fpdfwrapper"
@@ -24,6 +25,17 @@ func NewText(pdf fpdfwrapper.Fpdf, math core.Math, font core.Font) *text {
 		pdf,
 		math,
 		font,
+	}
+}
+
+// GetLinesQuantity retrieve the quantity of lines which a text will occupy to avoid that text to extrapolate a cell.
+func (s *text) GetLinesQuantity(text string, textProp *properties.Text, colWidth float64) int {
+	s.font.SetFont(textProp.Family, textProp.Style, textProp.Size)
+	textTranslated := s.textToUnicode(text, textProp)
+	if textProp.BreakLineStrategy == breakline.DashStrategy {
+		return len(s.getLinesBreakingLineWithDash(text, colWidth))
+	} else {
+		return len(s.getLinesBreakingLineFromSpace(strings.Split(textTranslated, " "), colWidth))
 	}
 }
 
