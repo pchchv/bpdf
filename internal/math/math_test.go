@@ -117,3 +117,230 @@ func TestMath_GetInnerCenterCell(t *testing.T) {
 		assert.Equal(t, 10.0, cell.Y)
 	})
 }
+
+func TestMath_Resize(t *testing.T) {
+	t.Run("When inner and outer have the same size and 100% is set, inner should be returned with 100 percent of outer",
+		func(t *testing.T) {
+			sut := math.New()
+
+			percent := 100.0
+			inner := &entity.Dimensions{Width: 100, Height: 100}
+			outer := &entity.Dimensions{Width: 100, Height: 100}
+
+			cell := sut.Resize(inner, outer, percent, false)
+
+			assert.Equal(t, 100.0, cell.Width)
+			assert.Equal(t, 100.0, cell.Height)
+		})
+
+	t.Run("When inner and outer have the same size and 75% is set, inner should be returned with '75%' of outer",
+		func(t *testing.T) {
+			sut := math.New()
+
+			percent := 75.0
+			inner := &entity.Dimensions{Width: 100, Height: 100}
+			outer := &entity.Dimensions{Width: 100, Height: 100}
+
+			cell := sut.Resize(inner, outer, percent, false)
+
+			assert.Equal(t, 75.0, cell.Width)
+			assert.Equal(t, 75.0, cell.Height)
+		})
+
+	t.Run("When inner is smaller and has the same proportion as outer and 100% is set, inner should be returned with '100%' of outer",
+		func(t *testing.T) {
+			sut := math.New()
+
+			percent := 100.0
+			inner := &entity.Dimensions{Width: 80, Height: 80}
+			outer := &entity.Dimensions{Width: 100, Height: 100}
+
+			cell := sut.Resize(inner, outer, percent, false)
+
+			assert.Equal(t, 100.0, cell.Width)
+			assert.Equal(t, 100.0, cell.Height)
+		})
+
+	t.Run("When inner is smaller and has the same proportion as outer and 75% is set, inner should be returned with '75%' of outer",
+		func(t *testing.T) {
+			sut := math.New()
+
+			percent := 75.0
+			inner := &entity.Dimensions{Width: 80, Height: 80}
+			outer := &entity.Dimensions{Width: 100, Height: 100}
+
+			cell := sut.Resize(inner, outer, percent, false)
+
+			assert.Equal(t, 75.0, cell.Width)
+			assert.Equal(t, 75.0, cell.Height)
+		})
+
+	t.Run("When inner is greater and has the same proportion as outer and 100% is set, inner should be returned with '100%' of outer",
+		func(t *testing.T) {
+			sut := math.New()
+
+			percent := 100.0
+			inner := &entity.Dimensions{Width: 120, Height: 120}
+			outer := &entity.Dimensions{Width: 100, Height: 100}
+
+			cell := sut.Resize(inner, outer, percent, false)
+
+			assert.Equal(t, 100.0, cell.Width)
+			assert.Equal(t, 100.0, cell.Height)
+		})
+
+	t.Run("When inner is greater and has the same proportion as outer and 75% is set, inner should be returned with '75%' of outer",
+		func(t *testing.T) {
+			sut := math.New()
+
+			percent := 75.0
+			inner := &entity.Dimensions{Width: 120, Height: 120}
+			outer := &entity.Dimensions{Width: 100, Height: 100}
+
+			cell := sut.Resize(inner, outer, percent, false)
+
+			assert.Equal(t, 75.0, cell.Width)
+			assert.Equal(t, 75.0, cell.Height)
+		})
+
+	t.Run("when height and internal proportion are smaller with '100%' sent, should return internal with '100%'",
+		func(t *testing.T) {
+			sut := math.New()
+
+			percent := 100.0
+			outer := &entity.Dimensions{Width: 100, Height: 100}
+			inner := &entity.Dimensions{Width: 100, Height: 80}
+
+			cell := sut.Resize(inner, outer, percent, false)
+
+			assert.Equal(t, 100.0, cell.Width)
+			assert.Equal(t, 80.0, cell.Height)
+		})
+
+	t.Run("when height and internal proportion are smaller with '75%' sent, should return internal with '75%' of the external",
+		func(t *testing.T) {
+			sut := math.New()
+
+			percent := 75.0
+			outer := &entity.Dimensions{Width: 100, Height: 100}
+			inner := &entity.Dimensions{Width: 100, Height: 80}
+
+			cell := sut.Resize(inner, outer, percent, false)
+
+			assert.Equal(t, 75.0, cell.Width)
+			assert.Equal(t, 60.0, cell.Height)
+		})
+
+	t.Run("When internal width is smaller and proportion is greater with '100%' sent, should return internal with '100%' of the external",
+		func(t *testing.T) {
+			sut := math.New()
+
+			percent := 100.0
+			inner := &entity.Dimensions{Width: 80, Height: 100}
+			outer := &entity.Dimensions{Width: 100, Height: 100}
+
+			cell := sut.Resize(inner, outer, percent, false)
+
+			assert.Equal(t, 80.0, cell.Width)
+			assert.Equal(t, 100.0, cell.Height)
+		})
+
+	t.Run("When internal width is smaller and proportion is greater with '75%' sent, should return internal with '75%' of the external",
+		func(t *testing.T) {
+			sut := math.New()
+
+			percent := 75.0
+			inner := &entity.Dimensions{Width: 80, Height: 100}
+			outer := &entity.Dimensions{Width: 100, Height: 100}
+
+			cell := sut.Resize(inner, outer, percent, false)
+
+			assert.Equal(t, 60.0, cell.Width)
+			assert.Equal(t, 75.0, cell.Height)
+		})
+
+	t.Run("When internal height is greater and proportion is greater with '100%' sent, should return internal with '100%' of the external",
+		func(t *testing.T) {
+			sut := math.New()
+
+			percent := 100.0
+			inner := &entity.Dimensions{Width: 100, Height: 125}
+			outer := &entity.Dimensions{Width: 100, Height: 100}
+
+			cell := sut.Resize(inner, outer, percent, false)
+
+			assert.Equal(t, 80.0, cell.Width)
+			assert.Equal(t, 100.0, cell.Height)
+		})
+
+	t.Run("When internal height is greater and proportion is greater with '75%' sent, should return internal with '75%' of the external",
+		func(t *testing.T) {
+			sut := math.New()
+
+			percent := 75.0
+			inner := &entity.Dimensions{Width: 100, Height: 125}
+			outer := &entity.Dimensions{Width: 100, Height: 100}
+
+			cell := sut.Resize(inner, outer, percent, false)
+
+			assert.Equal(t, 60.0, cell.Width)
+			assert.Equal(t, 75.0, cell.Height)
+		})
+
+	t.Run("When internal width is greater and proportion is smaller with '100%' sent, should return internal with '100%' of the external",
+		func(t *testing.T) {
+			sut := math.New()
+
+			percent := 100.0
+			inner := &entity.Dimensions{Width: 125, Height: 100}
+			outer := &entity.Dimensions{Width: 100, Height: 100}
+
+			cell := sut.Resize(inner, outer, percent, false)
+
+			assert.Equal(t, 100.0, cell.Width)
+			assert.Equal(t, 80.0, cell.Height)
+		})
+
+	t.Run("When internal width is greater and proportion is smaller with '75%' sent, should return internal with '75%' of the external",
+		func(t *testing.T) {
+			sut := math.New()
+
+			percent := 75.0
+			inner := &entity.Dimensions{Width: 125, Height: 100}
+			outer := &entity.Dimensions{Width: 100, Height: 100}
+
+			cell := sut.Resize(inner, outer, percent, false)
+
+			assert.Equal(t, 75.0, cell.Width)
+			assert.Equal(t, 60.0, cell.Height)
+		})
+
+	t.Run("when justReferenceWidth is true and inner extrapolates external height, it should resize image based on available height",
+		func(t *testing.T) {
+			sut := math.New()
+
+			percent := 100.0
+			justReferenceWidth := true
+			inner := &entity.Dimensions{Width: 50, Height: 50}
+			outer := &entity.Dimensions{Width: 100, Height: 50}
+
+			cell := sut.Resize(inner, outer, percent, justReferenceWidth)
+
+			assert.Equal(t, 50.0, cell.Width)
+			assert.Equal(t, 50.0, cell.Height)
+		})
+	t.Run("when justReferenceWidth is true and inner does not extrapolate external height, should resize the image based on the width",
+		func(t *testing.T) {
+			sut := math.New()
+
+			percent := 75.0
+			justReferenceWidth := true
+			inner := &entity.Dimensions{Width: 100, Height: 55}
+			outer := &entity.Dimensions{Width: 100, Height: 40.99999999999999}
+
+			cell := sut.Resize(inner, outer, percent, justReferenceWidth)
+
+			assert.Equal(t, 74.54545454545453, cell.Width)
+			assert.Equal(t, 40.99999999999999, cell.Height)
+		})
+}
