@@ -1,6 +1,8 @@
 package gofpdf
 
 import (
+	"unicode"
+
 	"github.com/pchchv/bpdf/consts/fontfamily"
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/internal/providers/gofpdf/fpdfwrapper"
@@ -33,4 +35,13 @@ func (s *text) textToUnicode(txt string, props *properties.Text) string {
 	}
 
 	return txt
+}
+
+func isIncorrectSpaceWidth(textWidth, spaceWidth, defaultSpaceWidth float64, text string) bool {
+	if textWidth <= 0 || spaceWidth <= defaultSpaceWidth*10 {
+		return false
+	}
+
+	lastChar := rune(text[len(text)-1])
+	return !unicode.IsLetter(lastChar) && !unicode.IsNumber(lastChar)
 }
