@@ -1,6 +1,7 @@
 package gofpdf
 
 import (
+	"fmt"
 	"strings"
 	"unicode"
 
@@ -92,6 +93,52 @@ func (s *text) addLine(textProp *properties.Text, xColOffset, colWidth, yColOffs
 	}
 
 	s.pdf.Text(dx+xColOffset+left, yColOffset+top, text)
+}
+
+func (s *text) getLinesBreakingLineFromSpace(words []string, colWidth float64) []string {
+	actualLine := 0
+	lines := []string{}
+	currentlySize := 0.0
+	lines = append(lines, "")
+	for _, word := range words {
+		if s.pdf.GetStringWidth(word+" ")+currentlySize < colWidth {
+			lines[actualLine] = lines[actualLine] + word + " "
+			currentlySize += s.pdf.GetStringWidth(word + " ")
+		} else {
+			lines = append(lines, "")
+			actualLine++
+			lines[actualLine] = lines[actualLine] + word + " "
+			currentlySize = s.pdf.GetStringWidth(word + " ")
+		}
+	}
+
+	return lines
+}
+
+func (s *text) getLinesBreakingLineWithDash(words string, colWidth float64) []string {
+	var content string
+	lines := []string{}
+	currentlySize := 0.0
+	dashSize := s.pdf.GetStringWidth(" - ")
+	for _, letter := range words {
+		if currentlySize+dashSize > colWidth-dashSize {
+			content += "-"
+			lines = append(lines, content)
+			content = ""
+			currentlySize = 0
+		}
+
+		letterString := fmt.Sprintf("%c", letter)
+		width := s.pdf.GetStringWidth(letterString)
+		content += letterString
+		currentlySize += width
+	}
+
+	if content != "" {
+		lines = append(lines, content)
+	}
+
+	return lines
 }
 
 func isIncorrectSpaceWidth(textWidth, spaceWidth, defaultSpaceWidth float64, text string) bool {
