@@ -9,6 +9,7 @@ import (
 	"github.com/pchchv/bpdf/consts/breakline"
 	"github.com/pchchv/bpdf/consts/fontfamily"
 	"github.com/pchchv/bpdf/core"
+	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/internal/providers/gofpdf/fpdfwrapper"
 	"github.com/pchchv/bpdf/properties"
 )
@@ -36,6 +37,72 @@ func (s *text) GetLinesQuantity(text string, textProp *properties.Text, colWidth
 		return len(s.getLinesBreakingLineWithDash(text, colWidth))
 	} else {
 		return len(s.getLinesBreakingLineFromSpace(strings.Split(textTranslated, " "), colWidth))
+	}
+}
+
+// Add a text inside a cell.
+func (s *text) Add(text string, cell *entity.Cell, textProp *properties.Text) {
+	s.font.SetFont(textProp.Family, textProp.Style, textProp.Size)
+	fontHeight := s.font.GetHeight(textProp.Family, textProp.Style, textProp.Size)
+	if textProp.Top > cell.Height {
+		textProp.Top = cell.Height
+	}
+
+	if textProp.Left > cell.Width {
+		textProp.Left = cell.Width
+	}
+
+	if textProp.Right > cell.Width {
+		textProp.Right = cell.Width
+	}
+
+	width := cell.Width - textProp.Left - textProp.Right
+	if width < 0 {
+		width = 0
+	}
+
+	x := cell.X + textProp.Left
+	y := cell.Y + textProp.Top
+	originalColor := s.font.GetColor()
+	if textProp.Color != nil {
+		s.font.SetColor(textProp.Color)
+	}
+
+	// override style if hyperlink is set
+	if textProp.Hyperlink != nil {
+		s.font.SetColor(&properties.BlueColor)
+	}
+
+	y += fontHeight
+	// apply Unicode before calc spaces
+	unicodeText := s.textToUnicode(text, textProp)
+	stringWidth := s.pdf.GetStringWidth(unicodeText)
+	// if should add one line
+	if stringWidth < width {
+		s.addLine(textProp, x, width, y, stringWidth, unicodeText)
+		if textProp.Color != nil {
+			s.font.SetColor(originalColor)
+		}
+		return
+	}
+
+	var lines []string
+	if textProp.BreakLineStrategy == breakline.EmptySpaceStrategy {
+		words := strings.Split(unicodeText, " ")
+		lines = s.getLinesBreakingLineFromSpace(words, width)
+	} else {
+		lines = s.getLinesBreakingLineWithDash(unicodeText, width)
+	}
+
+	accumulateOffsetY := 0.0
+	for index, line := range lines {
+		lineWidth := s.pdf.GetStringWidth(line)
+		s.addLine(textProp, x, width, y+float64(index)*fontHeight+accumulateOffsetY, lineWidth, line)
+		accumulateOffsetY += textProp.VerticalPadding
+	}
+
+	if textProp.Color != nil {
+		s.font.SetColor(originalColor)
 	}
 }
 
