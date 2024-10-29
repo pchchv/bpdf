@@ -33,3 +33,21 @@ func (s *math) Resize(inner *entity.Dimensions, outer *entity.Dimensions, percen
 
 	return &entity.Dimensions{Width: newInnerWidth, Height: newInnerHeight}
 }
+
+// GetCenterCorrection return the correction of space in X or Y to centralize a line in relation with another line.
+func (s *math) GetCenterCorrection(outerSize, innerSize float64) float64 {
+	return (outerSize - innerSize) / 2.0
+}
+
+// GetInnerCenterCell define a inner cell formatted inside outer cell centered.
+func (s *math) GetInnerCenterCell(inner *entity.Dimensions, outer *entity.Dimensions) *entity.Cell {
+	widthCorrection := s.GetCenterCorrection(outer.Width, inner.Width)
+	heightCorrection := s.GetCenterCorrection(outer.Height, inner.Height)
+
+	return &entity.Cell{
+		X:      widthCorrection,
+		Y:      heightCorrection,
+		Width:  inner.Width,
+		Height: inner.Height,
+	}
+}
