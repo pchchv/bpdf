@@ -2,6 +2,7 @@ package gofpdf
 
 import (
 	"bytes"
+	"errors"
 
 	"github.com/google/uuid"
 	"github.com/jung-kurt/gofpdf"
@@ -37,6 +38,25 @@ func (s image) GetImageInfo(img *entity.Image, extension extension.Extension) (*
 		bytes.NewReader(img.Bytes),
 	)
 	return info, imageID
+}
+
+// Add use a byte array to add image to PDF.
+func (s *image) Add(img *entity.Image, cell *entity.Cell, margins *entity.Margins, prop *properties.Rect, extension extension.Extension, flow bool) error {
+	imageID, _ := uuid.NewRandom()
+	info := s.pdf.RegisterImageOptionsReader(
+		imageID.String(),
+		gofpdf.ImageOptions{
+			ReadDpi:   false,
+			ImageType: string(extension),
+		},
+		bytes.NewReader(img.Bytes),
+	)
+	if info == nil {
+		return errors.New("could not register image options, maybe path/name is wrong")
+	}
+
+	s.addImageToPdf(imageID.String(), info, cell, margins, prop, flow)
+	return nil
 }
 
 func (s *image) addImageToPdf(imageLabel string, info *gofpdf.ImageInfoType, cell *entity.Cell, margins *entity.Margins, prop *properties.Rect, flow bool) {
