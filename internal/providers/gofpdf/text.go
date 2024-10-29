@@ -10,3 +10,12 @@ type text struct {
 	math core.Math
 	font core.Font
 }
+
+// NewText create a Text.
+func NewText(pdf fpdfwrapper.Fpdf, math core.Math, font core.Font) *text {
+	return &text{
+		pdf,
+		math,
+		font,
+	}
+}
