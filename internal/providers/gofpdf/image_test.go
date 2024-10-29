@@ -61,7 +61,7 @@ func TestImage_Add(t *testing.T) {
 
 		assert.Nil(t, err)
 	})
-	
+
 	t.Run("when prop is center, should work properly", func(t *testing.T) {
 		cell := fixture.CellEntity()
 		margins := fixture.MarginsEntity()
@@ -84,5 +84,43 @@ func TestImage_Add(t *testing.T) {
 		err := image.Add(&img, &cell, &margins, &rect, img.Extension, true)
 
 		assert.Nil(t, err)
+	})
+}
+
+func TestImage_GetImageInfo(t *testing.T) {
+	t.Run("when RegisterImageOptionsReader return nil, should return nil", func(t *testing.T) {
+
+		img := fixture.ImageEntity()
+		options := gofpdf.ImageOptions{
+			ReadDpi:   false,
+			ImageType: string(img.Extension),
+		}
+
+		pdf := mocks.NewFpdf(t)
+		pdf.EXPECT().RegisterImageOptionsReader(mock.Anything, options, bytes.NewReader(img.Bytes)).Return(nil)
+
+		image := gofpdf2.NewImage(pdf, mocks.NewMath(t))
+
+		info, _ := image.GetImageInfo(&img, img.Extension)
+
+		assert.Nil(t, info)
+	})
+
+	t.Run("when RegisterImageOptionsReader return info, should return info", func(t *testing.T) {
+
+		img := fixture.ImageEntity()
+		options := gofpdf.ImageOptions{
+			ReadDpi:   false,
+			ImageType: string(img.Extension),
+		}
+
+		pdf := mocks.NewFpdf(t)
+		pdf.EXPECT().RegisterImageOptionsReader(mock.Anything, options, bytes.NewReader(img.Bytes)).Return(&gofpdf.ImageInfoType{})
+
+		image := gofpdf2.NewImage(pdf, mocks.NewMath(t))
+
+		info, _ := image.GetImageInfo(&img, img.Extension)
+
+		assert.NotNil(t, info)
 	})
 }
