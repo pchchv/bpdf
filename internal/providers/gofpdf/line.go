@@ -2,6 +2,7 @@ package gofpdf
 
 import (
 	"github.com/pchchv/bpdf/consts/linestyle"
+	"github.com/pchchv/bpdf/consts/orientation"
 	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/internal/providers/gofpdf/fpdfwrapper"
 	"github.com/pchchv/bpdf/properties"
@@ -18,6 +19,14 @@ func NewLine(pdf fpdfwrapper.Fpdf) *line {
 		pdf:              pdf,
 		defaultColor:     &properties.BlackColor,
 		defaultThickness: linestyle.DefaultLineThickness,
+	}
+}
+
+func (l *line) Add(cell *entity.Cell, prop *properties.Line) {
+	if prop.Orientation == orientation.Vertical {
+		l.renderVertical(cell, prop)
+	} else {
+		l.renderHorizontal(cell, prop)
 	}
 }
 
