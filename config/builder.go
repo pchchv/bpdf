@@ -63,3 +63,26 @@ type CfgBuilder struct {
 	disableAutoPageBreak bool
 	generationMode       generation.Mode
 }
+
+func (b *CfgBuilder) getDimensions() *entity.Dimensions {
+	if b.dimensions != nil {
+		return b.dimensions
+	}
+
+	pageSize := pagesize.A4
+	if b.pageSize != nil {
+		pageSize = *b.pageSize
+	}
+
+	width, height := pagesize.GetDimensions(pageSize)
+	dimensions := &entity.Dimensions{
+		Width:  width,
+		Height: height,
+	}
+
+	if b.orientation == orientation.Horizontal && height > width {
+		dimensions.Width, dimensions.Height = dimensions.Height, dimensions.Width
+	}
+
+	return dimensions
+}
