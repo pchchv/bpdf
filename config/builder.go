@@ -251,6 +251,57 @@ func (b *CfgBuilder) WithSequentialLowMemoryMode(chunkWorkers int) Builder {
 	return b
 }
 
+// WithSubject defines the subject metadata.
+func (b *CfgBuilder) WithSubject(subject string, isUTF8 bool) Builder {
+	if subject == "" {
+		return b
+	}
+
+	if b.metadata == nil {
+		b.metadata = &entity.Metadata{}
+	}
+
+	b.metadata.Subject = &entity.Utf8Text{
+		Text: subject,
+		UTF8: isUTF8,
+	}
+
+	return b
+}
+
+// WithTitle defines the title metadata.
+func (b *CfgBuilder) WithTitle(title string, isUTF8 bool) Builder {
+	if title == "" {
+		return b
+	}
+
+	if b.metadata == nil {
+		b.metadata = &entity.Metadata{}
+	}
+
+	b.metadata.Title = &entity.Utf8Text{
+		Text: title,
+		UTF8: isUTF8,
+	}
+
+	return b
+}
+
+// WithCreationDate defines the creation date metadata.
+func (b *CfgBuilder) WithCreationDate(time time.Time) Builder {
+	if time.IsZero() {
+		return b
+	}
+
+	if b.metadata == nil {
+		b.metadata = &entity.Metadata{}
+	}
+
+	b.metadata.CreationDate = &time
+
+	return b
+}
+
 func (b *CfgBuilder) getDimensions() *entity.Dimensions {
 	if b.dimensions != nil {
 		return b.dimensions
