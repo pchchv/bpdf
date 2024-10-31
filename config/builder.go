@@ -302,6 +302,61 @@ func (b *CfgBuilder) WithCreationDate(time time.Time) Builder {
 	return b
 }
 
+// WithDefaultFont defines a custom font, other than arial. This can be used to define a custom font as default.
+func (b *CfgBuilder) WithDefaultFont(font *properties.Font) Builder {
+	if font == nil {
+		return b
+	}
+
+	if font.Family != "" {
+		b.defaultFont.Family = font.Family
+	}
+
+	if font.Size != 0 {
+		b.defaultFont.Size = font.Size
+	}
+
+	if font.Style != "" {
+		b.defaultFont.Style = font.Style
+	}
+
+	if font.Color != nil {
+		b.defaultFont.Color = font.Color
+	}
+
+	return b
+}
+
+// WithCustomFonts add custom fonts.
+func (b *CfgBuilder) WithCustomFonts(customFonts []*entity.CustomFont) Builder {
+	b.customFonts = customFonts
+	return b
+}
+
+// WithDebug defines a debug behaviour where maroto will draw borders in everything.
+func (b *CfgBuilder) WithDebug(on bool) Builder {
+	b.debug = on
+	return b
+}
+
+// WithKeywords defines the document's keyword metadata.
+func (b *CfgBuilder) WithKeywords(keywordsStr string, isUTF8 bool) Builder {
+	if keywordsStr == "" {
+		return b
+	}
+
+	if b.metadata == nil {
+		b.metadata = &entity.Metadata{}
+	}
+
+	b.metadata.KeywordsStr = &entity.Utf8Text{
+		Text: keywordsStr,
+		UTF8: isUTF8,
+	}
+
+	return b
+}
+
 func (b *CfgBuilder) getDimensions() *entity.Dimensions {
 	if b.dimensions != nil {
 		return b.dimensions
