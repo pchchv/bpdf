@@ -15,6 +15,7 @@ import (
 	"github.com/pchchv/bpdf/consts/barcode"
 	"github.com/pchchv/bpdf/consts/extension"
 	"github.com/pchchv/bpdf/core/entity"
+	"github.com/pchchv/bpdf/properties"
 )
 
 // codeInstance is a singleton of code.
@@ -50,6 +51,25 @@ func (c *code) GenQr(code string) (*entity.Image, error) {
 	}
 
 	return c.getImage(qrCode)
+}
+
+// GenBar is responsible to generate a barcode byte array.
+func (c *code) GenBar(code string, _ *entity.Cell, prop *properties.Barcode) (*entity.Image, error) {
+	barcodeGen := getBarcodeClosure(prop.Type)
+	barCode, err := barcodeGen(code)
+	if err != nil {
+		return nil, err
+	}
+
+	width := float64(barCode.Bounds().Dx())
+	heightPercentFromWidth := prop.Proportion.Height / prop.Proportion.Width
+	height := int(width * heightPercentFromWidth)
+	scaledBarCode, err := bc.Scale(barCode, int(width), height)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.getImage(scaledBarCode)
 }
 
 func (c *code) getImage(img image.Image) (*entity.Image, error) {
