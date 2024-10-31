@@ -7,8 +7,12 @@ import (
 	"image/draw"
 	"image/png"
 
+	bc "github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/code128"
 	"github.com/boombuler/barcode/datamatrix"
+	"github.com/boombuler/barcode/ean"
 	"github.com/boombuler/barcode/qr"
+	"github.com/pchchv/bpdf/consts/barcode"
 	"github.com/pchchv/bpdf/consts/extension"
 	"github.com/pchchv/bpdf/core/entity"
 )
@@ -67,4 +71,11 @@ func (c *code) getImage(img image.Image) (*entity.Image, error) {
 	}
 
 	return imgEntity, nil
+}
+
+func getBarcodeClosure(barcodeType barcode.Code) func(code string) (bc.BarcodeIntCS, error) {
+	if barcodeType == barcode.EAN {
+		return ean.Encode
+	}
+	return code128.Encode
 }
