@@ -7,6 +7,8 @@ import (
 	"image/draw"
 	"image/png"
 
+	"github.com/boombuler/barcode/datamatrix"
+	"github.com/boombuler/barcode/qr"
 	"github.com/pchchv/bpdf/consts/extension"
 	"github.com/pchchv/bpdf/core/entity"
 )
@@ -24,6 +26,26 @@ func New() *code {
 		codeInstance = &code{}
 	}
 	return codeInstance
+}
+
+// GenDataMatrix is responsible to generate a data matrix byte array.
+func (c *code) GenDataMatrix(code string) (*entity.Image, error) {
+	dataMatrix, err := datamatrix.Encode(code)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.getImage(dataMatrix)
+}
+
+// GenQr is responsible to generate a qr code byte array.
+func (c *code) GenQr(code string) (*entity.Image, error) {
+	qrCode, err := qr.Encode(code, qr.M, qr.Auto)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.getImage(qrCode)
 }
 
 func (c *code) getImage(img image.Image) (*entity.Image, error) {
