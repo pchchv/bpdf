@@ -24,3 +24,10 @@ func TestNew(t *testing.T) {
 		assert.NotNil(t, sut2)
 	})
 }
+
+func genStringWithLength(length int) (content string) {
+	for i := 0; i < length; i++ {
+		content += "a"
+	}
+	return
+}
