@@ -129,6 +129,52 @@ func (b *CfgBuilder) WithBottomMargin(bottom float64) Builder {
 	return b
 }
 
+// WithBackgroundImage defines the background image that will be applied in every page.
+func (b *CfgBuilder) WithBackgroundImage(bytes []byte, ext extension.Extension) Builder {
+	b.backgroundImage = &entity.Image{
+		Bytes:     bytes,
+		Extension: ext,
+	}
+
+	return b
+}
+
+// WithAuthor defines the author name metadata.
+func (b *CfgBuilder) WithAuthor(author string, isUTF8 bool) Builder {
+	if author == "" {
+		return b
+	}
+
+	if b.metadata == nil {
+		b.metadata = &entity.Metadata{}
+	}
+
+	b.metadata.Author = &entity.Utf8Text{
+		Text: author,
+		UTF8: isUTF8,
+	}
+
+	return b
+}
+
+// WithCreator defines the creator name metadata.
+func (b *CfgBuilder) WithCreator(creator string, isUTF8 bool) Builder {
+	if creator == "" {
+		return b
+	}
+
+	if b.metadata == nil {
+		b.metadata = &entity.Metadata{}
+	}
+
+	b.metadata.Creator = &entity.Utf8Text{
+		Text: creator,
+		UTF8: isUTF8,
+	}
+
+	return b
+}
+
 func (b *CfgBuilder) getDimensions() *entity.Dimensions {
 	if b.dimensions != nil {
 		return b.dimensions
