@@ -218,6 +218,38 @@ func (b *CfgBuilder) WithPageNumber(pageNumber ...properties.PageNumber) Builder
 	b.pageNumber = &pageN
 
 	return b
+}
+
+// WithConcurrentMode defines concurrent generation, chunk workers define how mano chuncks
+// will be executed concurrently.
+func (b *CfgBuilder) WithConcurrentMode(chunkWorkers int) Builder {
+	if chunkWorkers < 1 {
+		return b
+	}
+
+	b.generationMode = generation.Concurrent
+	b.chunkWorkers = chunkWorkers
+	return b
+}
+
+// WithSequentialMode defines that maroto will run in default mode.
+func (b *CfgBuilder) WithSequentialMode() Builder {
+	b.chunkWorkers = 1
+	b.generationMode = generation.Sequential
+	return b
+}
+
+// WithSequentialLowMemoryMode defines that maroto will run focusing in reduce memory consumption,
+// chunk workers define how many divisions the work will have.
+func (b *CfgBuilder) WithSequentialLowMemoryMode(chunkWorkers int) Builder {
+	if chunkWorkers < 1 {
+		return b
+	}
+
+	b.generationMode = generation.SequentialLowMemory
+	b.chunkWorkers = chunkWorkers
+	return b
+}
 
 func (b *CfgBuilder) getDimensions() *entity.Dimensions {
 	if b.dimensions != nil {
