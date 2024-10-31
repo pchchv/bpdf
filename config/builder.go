@@ -64,6 +64,31 @@ type CfgBuilder struct {
 	generationMode       generation.Mode
 }
 
+// Build finalizes the customization returning the entity.Config.
+func (b *CfgBuilder) Build() *entity.Config {
+	if b.pageNumber != nil {
+		b.pageNumber.WithFont(b.defaultFont)
+	}
+
+	return &entity.Config{
+		ProviderType:         b.providerType,
+		Dimensions:           b.getDimensions(),
+		Margins:              b.margins,
+		GenerationMode:       b.generationMode,
+		ChunkWorkers:         b.chunkWorkers,
+		Debug:                b.debug,
+		MaxGridSize:          b.maxGridSize,
+		DefaultFont:          b.defaultFont,
+		PageNumber:           b.pageNumber,
+		Protection:           b.protection,
+		Compression:          b.compression,
+		Metadata:             b.metadata,
+		CustomFonts:          b.customFonts,
+		BackgroundImage:      b.backgroundImage,
+		DisableAutoPageBreak: b.disableAutoPageBreak,
+	}
+}
+
 func (b *CfgBuilder) getDimensions() *entity.Dimensions {
 	if b.dimensions != nil {
 		return b.dimensions
