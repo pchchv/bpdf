@@ -109,6 +109,26 @@ func (b *CfgBuilder) WithTopMargin(top float64) Builder {
 	return b
 }
 
+// WithRightMargin customize margin.
+func (b *CfgBuilder) WithRightMargin(right float64) Builder {
+	if right < pagesize.MinRightMargin {
+		return b
+	}
+
+	b.margins.Right = right
+	return b
+}
+
+// WithBottomMargin customize margin.
+func (b *CfgBuilder) WithBottomMargin(bottom float64) Builder {
+	if bottom < pagesize.MinBottomMargin {
+		return b
+	}
+
+	b.margins.Bottom = bottom
+	return b
+}
+
 func (b *CfgBuilder) getDimensions() *entity.Dimensions {
 	if b.dimensions != nil {
 		return b.dimensions
