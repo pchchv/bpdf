@@ -5,9 +5,11 @@ import (
 	"time"
 
 	"github.com/pchchv/bpdf/consts/extension"
+	"github.com/pchchv/bpdf/consts/generation"
 	"github.com/pchchv/bpdf/consts/orientation"
 	"github.com/pchchv/bpdf/consts/pagesize"
 	"github.com/pchchv/bpdf/consts/protection"
+	"github.com/pchchv/bpdf/consts/provider"
 	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/properties"
 )
@@ -40,4 +42,24 @@ type Builder interface {
 	WithDisableAutoPageBreak(disabled bool) Builder
 	WithKeywords(keywordsStr string, isUTF8 bool) Builder
 	Build() *entity.Config
+}
+
+type CfgBuilder struct {
+	providerType         provider.Provider
+	dimensions           *entity.Dimensions
+	margins              *entity.Margins
+	chunkWorkers         int
+	debug                bool
+	maxGridSize          int
+	defaultFont          *properties.Font
+	customFonts          []*entity.CustomFont
+	pageNumber           *properties.PageNumber
+	protection           *entity.Protection
+	compression          bool
+	pageSize             *pagesize.Size
+	orientation          orientation.Orient
+	metadata             *entity.Metadata
+	backgroundImage      *entity.Image
+	disableAutoPageBreak bool
+	generationMode       generation.Mode
 }
