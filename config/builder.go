@@ -2,6 +2,7 @@
 package config
 
 import (
+	"strings"
 	"time"
 
 	"github.com/pchchv/bpdf/consts/extension"
@@ -198,6 +199,25 @@ func (b *CfgBuilder) WithOrientation(orientation orientation.Orient) Builder {
 	b.orientation = orientation
 	return b
 }
+
+// WithPageNumber defines a string pattern to write the current page and total.
+func (b *CfgBuilder) WithPageNumber(pageNumber ...properties.PageNumber) Builder {
+	var pageN properties.PageNumber
+	if len(pageNumber) > 0 {
+		pageN = pageNumber[0]
+	}
+
+	if !strings.Contains(pageN.Pattern, "{current}") || !strings.Contains(pageN.Pattern, "{total}") {
+		pageN.Pattern = "{current} / {total}"
+	}
+
+	if !pageN.Place.IsValid() {
+		pageN.Place = properties.Bottom
+	}
+
+	b.pageNumber = &pageN
+
+	return b
 
 func (b *CfgBuilder) getDimensions() *entity.Dimensions {
 	if b.dimensions != nil {
