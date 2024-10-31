@@ -175,6 +175,30 @@ func (b *CfgBuilder) WithCreator(creator string, isUTF8 bool) Builder {
 	return b
 }
 
+// WithProtection defines protection types to the PDF document.
+func (b *CfgBuilder) WithProtection(protectionType protection.Protection, userPassword, ownerPassword string) Builder {
+	b.protection = &entity.Protection{
+		Type:          protectionType,
+		UserPassword:  userPassword,
+		OwnerPassword: ownerPassword,
+	}
+
+	return b
+}
+
+// WithCompression defines compression.
+func (b *CfgBuilder) WithCompression(compression bool) Builder {
+	b.compression = compression
+	return b
+}
+
+// WithOrientation defines the page orientation. The default orientation is vertical,
+// if horizontal is defined width and height will be flipped.
+func (b *CfgBuilder) WithOrientation(orientation orientation.Orient) Builder {
+	b.orientation = orientation
+	return b
+}
+
 func (b *CfgBuilder) getDimensions() *entity.Dimensions {
 	if b.dimensions != nil {
 		return b.dimensions
