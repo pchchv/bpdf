@@ -5,6 +5,7 @@ import (
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/internal/cache"
+	"github.com/pchchv/bpdf/internal/providers/gofpdf"
 )
 
 type Bpdf struct {
@@ -22,4 +23,13 @@ type Bpdf struct {
 	currentHeight float64
 	// Processing
 	pool async.Processor[[]core.Page, []byte]
+}
+
+func getProvider(cache cache.Cache, cfg *entity.Config) core.Provider {
+	deps := gofpdf.NewBuilder().Build(cfg, cache)
+	provider := gofpdf.New(deps)
+	provider.SetMetadata(cfg.Metadata)
+	provider.SetCompression(cfg.Compression)
+	provider.SetProtection(cfg.Protection)
+	return provider
 }
