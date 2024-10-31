@@ -107,6 +107,28 @@ func TestCode_GenBar(t *testing.T) {
 	})
 }
 
+func TestCode_GenDataMatrix(t *testing.T) {
+	t.Run("When cannot generate data matrix, should return error", func(t *testing.T) {
+		sut := code.New()
+		data := genStringWithLength(5000)
+
+		bytes, err := sut.GenDataMatrix(data)
+
+		assert.NotNil(t, err)
+		assert.Nil(t, bytes)
+	})
+
+	t.Run("When can generate data matrix, should return bytes", func(t *testing.T) {
+		sut := code.New()
+		data := genStringWithLength(50)
+
+		bytes, err := sut.GenDataMatrix(data)
+
+		assert.NotNil(t, bytes)
+		assert.Nil(t, err)
+	})
+}
+
 func genStringWithLength(length int) (content string) {
 	for i := 0; i < length; i++ {
 		content += "a"
