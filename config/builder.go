@@ -357,6 +357,26 @@ func (b *CfgBuilder) WithKeywords(keywordsStr string, isUTF8 bool) Builder {
 	return b
 }
 
+// WithDimensions defines custom page dimensions, this overrides page size.
+func (b *CfgBuilder) WithDimensions(width float64, height float64) Builder {
+	if width <= 0 || height <= 0 {
+		return b
+	}
+
+	b.dimensions = &entity.Dimensions{
+		Width:  width,
+		Height: height,
+	}
+
+	return b
+}
+
+// WithDisableAutoPageBreak defines the option to disable automatic page breaks.
+func (b *CfgBuilder) WithDisableAutoPageBreak(disabled bool) Builder {
+	b.disableAutoPageBreak = disabled
+	return b
+}
+
 func (b *CfgBuilder) getDimensions() *entity.Dimensions {
 	if b.dimensions != nil {
 		return b.dimensions
