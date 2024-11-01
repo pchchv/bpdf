@@ -2,6 +2,7 @@ package bpdf
 
 import (
 	"github.com/f-amaral/go-async/async"
+	"github.com/pchchv/bpdf/config"
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/internal/cache"
@@ -32,4 +33,12 @@ func getProvider(cache cache.Cache, cfg *entity.Config) core.Provider {
 	provider.SetCompression(cfg.Compression)
 	provider.SetProtection(cfg.Protection)
 	return provider
+}
+
+func getConfig(configs ...*entity.Config) *entity.Config {
+	if len(configs) > 0 {
+		return configs[0]
+	}
+
+	return config.NewBuilder().Build()
 }
