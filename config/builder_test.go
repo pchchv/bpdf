@@ -211,3 +211,58 @@ func TestCfgBuilder_WithTopMargin(t *testing.T) {
 		assert.Equal(t, 5.0, cfg.Margins.Top)
 	})
 }
+
+func TestBuilder_WithTitle(t *testing.T) {
+	t.Run("when title is empty, should ignore", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithTitle("", true).Build()
+
+		assert.Nil(t, cfg.Metadata)
+	})
+
+	t.Run("when title valid, should apply", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithTitle("title", true).Build()
+
+		assert.Equal(t, "title", cfg.Metadata.Title.Text)
+		assert.Equal(t, true, cfg.Metadata.Title.UTF8)
+	})
+}
+
+func TestCfgBuilder_WithLeftMargin(t *testing.T) {
+	t.Run("when left is invalid, should not change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithLeftMargin(-1).Build()
+
+		assert.Equal(t, 10.0, cfg.Margins.Left)
+	})
+
+	t.Run("when left is valid, should change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithLeftMargin(5).Build()
+
+		assert.Equal(t, 5.0, cfg.Margins.Left)
+	})
+}
+
+func TestCfgBuilder_WithRightMargin(t *testing.T) {
+	t.Run("when right is invalid, should not change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithRightMargin(-1).Build()
+
+		assert.Equal(t, 10.0, cfg.Margins.Right)
+	})
+
+	t.Run("when right is valid, should change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithRightMargin(5).Build()
+
+		assert.Equal(t, 5.0, cfg.Margins.Right)
+	})
+}
