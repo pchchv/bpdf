@@ -12,6 +12,7 @@ import (
 	"github.com/pchchv/bpdf/consts/generation"
 	"github.com/pchchv/bpdf/consts/orientation"
 	"github.com/pchchv/bpdf/consts/pagesize"
+	"github.com/pchchv/bpdf/consts/protection"
 	"github.com/pchchv/bpdf/consts/provider"
 	"github.com/pchchv/bpdf/core/entity"
 	"github.com/stretchr/testify/assert"
@@ -424,5 +425,58 @@ func TestBuilder_WithConcurrentMode(t *testing.T) {
 
 		assert.Equal(t, generation.Concurrent, cfg.GenerationMode)
 		assert.Equal(t, 7, cfg.ChunkWorkers)
+	})
+}
+
+func TestCfgBuilder_WithSequentialMode(t *testing.T) {
+	t.Run("when sequential, should apply sequential", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithSequentialMode().Build()
+
+		assert.Equal(t, generation.Sequential, cfg.GenerationMode)
+		assert.Equal(t, 1, cfg.ChunkWorkers)
+	})
+
+	t.Run("when sequential, should override sequential low memory", func(t *testing.T) {
+		sut := config.NewBuilder()
+		sut.WithSequentialLowMemoryMode(10)
+
+		cfg := sut.WithSequentialMode().Build()
+
+		assert.Equal(t, generation.Sequential, cfg.GenerationMode)
+		assert.Equal(t, 1, cfg.ChunkWorkers)
+	})
+
+	t.Run("when sequential, should override concurrent", func(t *testing.T) {
+		sut := config.NewBuilder()
+		sut.WithConcurrentMode(10)
+
+		cfg := sut.WithSequentialMode().Build()
+
+		assert.Equal(t, generation.Sequential, cfg.GenerationMode)
+		assert.Equal(t, 1, cfg.ChunkWorkers)
+	})
+}
+
+func TestCfgBuilder_WithProtection(t *testing.T) {
+	t.Run("when with protection, should apply correct", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithProtection(protection.Copy, "password", "owner-password").Build()
+
+		assert.Equal(t, protection.Copy, cfg.Protection.Type)
+		assert.Equal(t, "password", cfg.Protection.UserPassword)
+		assert.Equal(t, "owner-password", cfg.Protection.OwnerPassword)
+	})
+}
+
+func TestCfgBuilder_WithCompression(t *testing.T) {
+	t.Run("when with compression, should apply correct", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithCompression(true).Build()
+
+		assert.True(t, cfg.Compression)
 	})
 }
