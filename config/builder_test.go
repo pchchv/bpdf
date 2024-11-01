@@ -10,6 +10,7 @@ import (
 	"github.com/pchchv/bpdf/consts/fontfamily"
 	"github.com/pchchv/bpdf/consts/fontstyle"
 	"github.com/pchchv/bpdf/consts/generation"
+	"github.com/pchchv/bpdf/consts/orientation"
 	"github.com/pchchv/bpdf/consts/pagesize"
 	"github.com/pchchv/bpdf/consts/provider"
 	"github.com/pchchv/bpdf/core/entity"
@@ -320,5 +321,108 @@ func TestBuilder_WithSubject(t *testing.T) {
 
 		assert.Equal(t, "subject", cfg.Metadata.Subject.Text)
 		assert.Equal(t, true, cfg.Metadata.Subject.UTF8)
+	})
+}
+
+func TestBuilder_WithOrientation(t *testing.T) {
+	t.Run("when using default page size and orientation is not set, should use vertical", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.Build()
+
+		assert.Equal(t, 210.0, cfg.Dimensions.Width)
+		assert.Equal(t, 297.0, cfg.Dimensions.Height)
+		assert.True(t, cfg.Dimensions.Height > cfg.Dimensions.Width)
+	})
+
+	t.Run("when using default page size and orientation is set to horizontal, should use horizontal", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithOrientation(orientation.Horizontal).Build()
+
+		assert.Equal(t, 297.0, cfg.Dimensions.Width)
+		assert.Equal(t, 210.0, cfg.Dimensions.Height)
+		assert.True(t, cfg.Dimensions.Width > cfg.Dimensions.Height)
+	})
+
+	t.Run("when using default page size and orientation is not set, should use vertical", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithPageSize(pagesize.A5).Build()
+
+		assert.Equal(t, 148.4, cfg.Dimensions.Width)
+		assert.Equal(t, 210.0, cfg.Dimensions.Height)
+		assert.True(t, cfg.Dimensions.Height > cfg.Dimensions.Width)
+	})
+
+	t.Run("when using default page size and orientation is set to horizontal, should use horizontal", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithPageSize(pagesize.A5).WithOrientation(orientation.Horizontal).Build()
+
+		assert.Equal(t, 210.0, cfg.Dimensions.Width)
+		assert.Equal(t, 148.4, cfg.Dimensions.Height)
+		assert.True(t, cfg.Dimensions.Width > cfg.Dimensions.Height)
+	})
+}
+
+func TestBuilder_WithCreator(t *testing.T) {
+	t.Run("when creator is empty, should ignore", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithCreator("", true).Build()
+
+		assert.Nil(t, cfg.Metadata)
+	})
+
+	t.Run("when creator valid, should apply", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithCreator("creator", true).Build()
+
+		assert.Equal(t, "creator", cfg.Metadata.Creator.Text)
+		assert.Equal(t, true, cfg.Metadata.Creator.UTF8)
+	})
+}
+
+// nolint:dupl
+// dupl is good here
+func TestBuilder_WithConcurrentMode(t *testing.T) {
+	t.Run("when chunk size is invalid, should not change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithConcurrentMode(-1).Build()
+
+		assert.Equal(t, generation.Sequential, cfg.GenerationMode)
+		assert.Equal(t, 1, cfg.ChunkWorkers)
+	})
+
+	t.Run("when chunk size is valid, should change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithConcurrentMode(7).Build()
+
+		assert.Equal(t, generation.Concurrent, cfg.GenerationMode)
+		assert.Equal(t, 7, cfg.ChunkWorkers)
+	})
+
+	t.Run("when chunk size is valid, should override sequential", func(t *testing.T) {
+		sut := config.NewBuilder()
+		sut.WithSequentialMode()
+
+		cfg := sut.WithConcurrentMode(7).Build()
+
+		assert.Equal(t, generation.Concurrent, cfg.GenerationMode)
+		assert.Equal(t, 7, cfg.ChunkWorkers)
+	})
+
+	t.Run("when chunk size is valid, should override sequential low memory", func(t *testing.T) {
+		sut := config.NewBuilder()
+		sut.WithSequentialLowMemoryMode(5)
+
+		cfg := sut.WithConcurrentMode(7).Build()
+
+		assert.Equal(t, generation.Concurrent, cfg.GenerationMode)
+		assert.Equal(t, 7, cfg.ChunkWorkers)
 	})
 }
