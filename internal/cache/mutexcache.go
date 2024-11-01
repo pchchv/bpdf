@@ -24,3 +24,11 @@ func (c *mutexCache) AddImage(value string, image *entity.Image) {
 func (c *mutexCache) GetImage(file string, extension extension.Extension) (*entity.Image, error) {
 	return c.inner.GetImage(file, extension)
 }
+
+// LoadImage adds a behavior to lock/unlock cache write.
+func (c *mutexCache) LoadImage(file string, extension extension.Extension) error {
+	c.imageMutex.Lock()
+	defer c.imageMutex.Unlock()
+
+	return c.inner.LoadImage(file, extension)
+}
