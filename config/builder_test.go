@@ -480,3 +480,128 @@ func TestCfgBuilder_WithCompression(t *testing.T) {
 		assert.True(t, cfg.Compression)
 	})
 }
+
+func TestCfgBuilder_WithPageNumber(t *testing.T) {
+	t.Run("when using empty, should apply default", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithPageNumber().Build()
+
+		assert.Equal(t, "{current} / {total}", cfg.PageNumber.Pattern)
+		assert.Equal(t, properties.Bottom, cfg.PageNumber.Place)
+		assert.Equal(t, fontstyle.Normal, cfg.PageNumber.Style)
+		assert.Equal(t, fontfamily.Arial, cfg.PageNumber.Family)
+		assert.Equal(t, 10.0, cfg.PageNumber.Size)
+		assert.Equal(t, 0, cfg.PageNumber.Color.Red)
+		assert.Equal(t, 0, cfg.PageNumber.Color.Green)
+		assert.Equal(t, 0, cfg.PageNumber.Color.Blue)
+	})
+
+	t.Run("when string pattern doesn´t have current, should apply default pattern", func(t *testing.T) {
+		sut := config.NewBuilder()
+		pageNumber := properties.PageNumber{
+			Pattern: "{total}",
+		}
+
+		cfg := sut.WithPageNumber(pageNumber).Build()
+
+		assert.Equal(t, "{current} / {total}", cfg.PageNumber.Pattern)
+	})
+
+	t.Run("when string pattern doesn´t have total, should apply default pattern", func(t *testing.T) {
+		sut := config.NewBuilder()
+		pageNumber := properties.PageNumber{
+			Pattern: "{current}",
+		}
+
+		cfg := sut.WithPageNumber(pageNumber).Build()
+
+		assert.Equal(t, "{current} / {total}", cfg.PageNumber.Pattern)
+	})
+
+	t.Run("when string pattern is correct, should apply pattern", func(t *testing.T) {
+		sut := config.NewBuilder()
+		pageNumber := properties.PageNumber{
+			Pattern: "Page {current} of {total}",
+		}
+
+		cfg := sut.WithPageNumber(pageNumber).Build()
+
+		assert.Equal(t, "Page {current} of {total}", cfg.PageNumber.Pattern)
+	})
+
+	t.Run("when place is not valid, should apply default", func(t *testing.T) {
+		sut := config.NewBuilder()
+		pageNumber := properties.PageNumber{
+			Place: "invalid",
+		}
+
+		cfg := sut.WithPageNumber(pageNumber).Build()
+
+		assert.Equal(t, properties.Bottom, cfg.PageNumber.Place)
+	})
+
+	t.Run("when place is valid, should apply config", func(t *testing.T) {
+		sut := config.NewBuilder()
+		pageNumber := properties.PageNumber{
+			Place: properties.Top,
+		}
+
+		cfg := sut.WithPageNumber(pageNumber).Build()
+
+		assert.Equal(t, properties.Top, cfg.PageNumber.Place)
+	})
+}
+
+// nolint:dupl // dupl is good here
+func TestCfgBuilder_WithSequentialLowMemoryMode(t *testing.T) {
+	t.Run("when chunk size is invalid, should not change the default value", func(t *testing.T) {
+
+		sut := config.NewBuilder()
+
+		cfg := sut.WithSequentialLowMemoryMode(-1).Build()
+
+		assert.Equal(t, generation.Sequential, cfg.GenerationMode)
+		assert.Equal(t, 1, cfg.ChunkWorkers)
+	})
+
+	t.Run("when chunk size is valid, should change the default value", func(t *testing.T) {
+
+		sut := config.NewBuilder()
+
+		cfg := sut.WithSequentialLowMemoryMode(7).Build()
+
+		assert.Equal(t, generation.SequentialLowMemory, cfg.GenerationMode)
+		assert.Equal(t, 7, cfg.ChunkWorkers)
+	})
+
+	t.Run("when chunk size is valid, should override sequential low memory", func(t *testing.T) {
+
+		sut := config.NewBuilder()
+		sut.WithSequentialMode()
+
+		cfg := sut.WithSequentialLowMemoryMode(7).Build()
+
+		assert.Equal(t, generation.SequentialLowMemory, cfg.GenerationMode)
+		assert.Equal(t, 7, cfg.ChunkWorkers)
+	})
+
+	t.Run("when chunk size is valid, should override concurrent", func(t *testing.T) {
+
+		sut := config.NewBuilder()
+		sut.WithConcurrentMode(5)
+
+		cfg := sut.WithSequentialLowMemoryMode(7).Build()
+
+		assert.Equal(t, generation.SequentialLowMemory, cfg.GenerationMode)
+		assert.Equal(t, 7, cfg.ChunkWorkers)
+	})
+}
+
+func TestBuilder_WithDebug(t *testing.T) {
+	sut := config.NewBuilder()
+
+	cfg := sut.WithDebug(true).Build()
+
+	assert.Equal(t, true, cfg.Debug)
+}
