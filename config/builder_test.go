@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/pchchv/bpdf/config"
+	"github.com/pchchv/bpdf/consts/extension"
 	"github.com/pchchv/bpdf/consts/fontfamily"
 	"github.com/pchchv/bpdf/consts/fontstyle"
 	"github.com/pchchv/bpdf/consts/generation"
@@ -65,5 +66,34 @@ func TestBuilder_WithKeywords(t *testing.T) {
 
 		assert.Equal(t, "keyword", cfg.Metadata.KeywordsStr.Text)
 		assert.Equal(t, true, cfg.Metadata.KeywordsStr.UTF8)
+	})
+}
+
+func TestCfgBuilder_WithBackgroundImage(t *testing.T) {
+	t.Run("when with background, should apply", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithBackgroundImage([]byte{1, 2, 3}, extension.Png).Build()
+
+		assert.Equal(t, []byte{1, 2, 3}, cfg.BackgroundImage.Bytes)
+		assert.Equal(t, extension.Png, cfg.BackgroundImage.Extension)
+	})
+}
+
+func TestBuilder_WithDisableAutoPageBreak(t *testing.T) {
+	t.Run("when disable auto page break is false, should not change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithDisableAutoPageBreak(false).Build()
+
+		assert.Equal(t, false, cfg.DisableAutoPageBreak)
+	})
+
+	t.Run("when disable auto page break is true, should change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithDisableAutoPageBreak(true).Build()
+
+		assert.Equal(t, true, cfg.DisableAutoPageBreak)
 	})
 }
