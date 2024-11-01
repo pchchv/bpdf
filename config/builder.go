@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/pchchv/bpdf/consts/extension"
+	"github.com/pchchv/bpdf/consts/fontfamily"
+	"github.com/pchchv/bpdf/consts/fontstyle"
 	"github.com/pchchv/bpdf/consts/generation"
 	"github.com/pchchv/bpdf/consts/orientation"
 	"github.com/pchchv/bpdf/consts/pagesize"
@@ -63,6 +65,28 @@ type CfgBuilder struct {
 	backgroundImage      *entity.Image
 	disableAutoPageBreak bool
 	generationMode       generation.Mode
+}
+
+// NewBuilder is responsible to create an instance of Builder.
+func NewBuilder() Builder {
+	return &CfgBuilder{
+		providerType: provider.Gofpdf,
+		margins: &entity.Margins{
+			Left:   pagesize.DefaultLeftMargin,
+			Right:  pagesize.DefaultRightMargin,
+			Top:    pagesize.DefaultTopMargin,
+			Bottom: pagesize.DefaultBottomMargin,
+		},
+		maxGridSize: pagesize.DefaultMaxGridSum,
+		defaultFont: &properties.Font{
+			Size:   pagesize.DefaultFontSize,
+			Family: fontfamily.Arial,
+			Style:  fontstyle.Normal,
+			Color:  &properties.BlackColor,
+		},
+		generationMode: generation.Sequential,
+		chunkWorkers:   1,
+	}
 }
 
 // Build finalizes the customization returning the entity.Config.
