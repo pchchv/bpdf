@@ -15,6 +15,7 @@ import (
 	"github.com/pchchv/bpdf/consts/protection"
 	"github.com/pchchv/bpdf/consts/provider"
 	"github.com/pchchv/bpdf/core/entity"
+	"github.com/pchchv/bpdf/properties"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -604,4 +605,97 @@ func TestBuilder_WithDebug(t *testing.T) {
 	cfg := sut.WithDebug(true).Build()
 
 	assert.Equal(t, true, cfg.Debug)
+}
+
+func TestBuilder_WithMaxGridSize(t *testing.T) {
+	t.Run("when max grid size is invalid, should not change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithMaxGridSize(-1).Build()
+
+		assert.Equal(t, 12, cfg.MaxGridSize)
+	})
+
+	t.Run("when max grid size is valid, should change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithMaxGridSize(8).Build()
+
+		assert.Equal(t, 8, cfg.MaxGridSize)
+	})
+}
+
+func TestBuilder_WithDefaultFont(t *testing.T) {
+	t.Run("when fontstyle is nil, should not change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithDefaultFont(nil).Build()
+
+		assert.Equal(t, fontfamily.Arial, cfg.DefaultFont.Family)
+		assert.Equal(t, 10.0, cfg.DefaultFont.Size)
+		assert.Equal(t, fontstyle.Normal, cfg.DefaultFont.Style)
+		assert.Equal(t, 0, cfg.DefaultFont.Color.Red)
+		assert.Equal(t, 0, cfg.DefaultFont.Color.Green)
+		assert.Equal(t, 0, cfg.DefaultFont.Color.Blue)
+	})
+
+	t.Run("when family is filled, should change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithDefaultFont(&properties.Font{
+			Family: "new family",
+		}).Build()
+
+		assert.Equal(t, "new family", cfg.DefaultFont.Family)
+		assert.Equal(t, 10.0, cfg.DefaultFont.Size)
+		assert.Equal(t, fontstyle.Normal, cfg.DefaultFont.Style)
+		assert.Equal(t, 0, cfg.DefaultFont.Color.Red)
+		assert.Equal(t, 0, cfg.DefaultFont.Color.Green)
+		assert.Equal(t, 0, cfg.DefaultFont.Color.Blue)
+	})
+
+	t.Run("when style is filled, should change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithDefaultFont(&properties.Font{
+			Style: fontstyle.Bold,
+		}).Build()
+
+		assert.Equal(t, fontfamily.Arial, cfg.DefaultFont.Family)
+		assert.Equal(t, 10.0, cfg.DefaultFont.Size)
+		assert.Equal(t, fontstyle.Bold, cfg.DefaultFont.Style)
+		assert.Equal(t, 0, cfg.DefaultFont.Color.Red)
+		assert.Equal(t, 0, cfg.DefaultFont.Color.Green)
+		assert.Equal(t, 0, cfg.DefaultFont.Color.Blue)
+	})
+
+	t.Run("when size is filled, should change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithDefaultFont(&properties.Font{
+			Size: 13,
+		}).Build()
+
+		assert.Equal(t, fontfamily.Arial, cfg.DefaultFont.Family)
+		assert.Equal(t, 13.0, cfg.DefaultFont.Size)
+		assert.Equal(t, fontstyle.Normal, cfg.DefaultFont.Style)
+		assert.Equal(t, 0, cfg.DefaultFont.Color.Red)
+		assert.Equal(t, 0, cfg.DefaultFont.Color.Green)
+		assert.Equal(t, 0, cfg.DefaultFont.Color.Blue)
+	})
+
+	t.Run("when color is filled, should change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithDefaultFont(&properties.Font{
+			Color: &properties.Color{Red: 10, Green: 10, Blue: 10},
+		}).Build()
+
+		assert.Equal(t, fontfamily.Arial, cfg.DefaultFont.Family)
+		assert.Equal(t, 10.0, cfg.DefaultFont.Size)
+		assert.Equal(t, fontstyle.Normal, cfg.DefaultFont.Style)
+		assert.Equal(t, 10, cfg.DefaultFont.Color.Red)
+		assert.Equal(t, 10, cfg.DefaultFont.Color.Green)
+		assert.Equal(t, 10, cfg.DefaultFont.Color.Blue)
+	})
 }
