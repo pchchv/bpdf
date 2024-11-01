@@ -266,3 +266,59 @@ func TestCfgBuilder_WithRightMargin(t *testing.T) {
 		assert.Equal(t, 5.0, cfg.Margins.Right)
 	})
 }
+
+func TestBuilder_WithAuthor(t *testing.T) {
+	t.Run("when author is empty, should ignore", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithAuthor("", true).Build()
+
+		assert.Nil(t, cfg.Metadata)
+	})
+
+	t.Run("when author valid, should apply", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithAuthor("author", true).Build()
+
+		assert.Equal(t, "author", cfg.Metadata.Author.Text)
+		assert.Equal(t, true, cfg.Metadata.Author.UTF8)
+	})
+}
+
+func TestCfgBuilder_WithBottomMargin(t *testing.T) {
+	t.Run("when bottom is invalid, should not change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithBottomMargin(-1).Build()
+
+		assert.Equal(t, 20.0025, cfg.Margins.Bottom)
+	})
+
+	t.Run("when bottom is valid, should change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithBottomMargin(5).Build()
+
+		assert.Equal(t, 5.0, cfg.Margins.Bottom)
+	})
+}
+
+func TestBuilder_WithSubject(t *testing.T) {
+	t.Run("when subject is empty, should ignore", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithSubject("", true).Build()
+
+		assert.Nil(t, cfg.Metadata)
+	})
+
+	t.Run("when subject valid, should apply", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithSubject("subject", true).Build()
+
+		assert.Equal(t, "subject", cfg.Metadata.Subject.Text)
+		assert.Equal(t, true, cfg.Metadata.Subject.UTF8)
+	})
+}
