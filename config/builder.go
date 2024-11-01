@@ -377,6 +377,23 @@ func (b *CfgBuilder) WithDisableAutoPageBreak(disabled bool) Builder {
 	return b
 }
 
+// WithPageSize defines the page size, ex: A4, A4 and etc.
+func (b *CfgBuilder) WithPageSize(size pagesize.Size) Builder {
+	if size != "" {
+		b.pageSize = &size
+	}
+	return b
+}
+
+// WithMaxGridSize defines a custom max grid sum which it will change the sum of column sizes.
+func (b *CfgBuilder) WithMaxGridSize(maxGridSize int) Builder {
+	if maxGridSize >= 0 {
+		b.maxGridSize = maxGridSize
+	}
+
+	return b
+}
+
 func (b *CfgBuilder) getDimensions() *entity.Dimensions {
 	if b.dimensions != nil {
 		return b.dimensions
