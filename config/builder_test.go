@@ -155,3 +155,59 @@ func TestBuilder_WithCreationDate(t *testing.T) {
 		assert.Equal(t, &timeNow, cfg.Metadata.CreationDate)
 	})
 }
+
+func TestBuilder_WithDimensions(t *testing.T) {
+	t.Run("when dimensions has invalid width, should not change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithDimensions(0, 80).Build()
+
+		assert.Equal(t, 210.0, cfg.Dimensions.Width)
+		assert.Equal(t, 297.0, cfg.Dimensions.Height)
+	})
+
+	t.Run("when dimensions has invalid height, should not change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithDimensions(80, 0).Build()
+
+		assert.Equal(t, 210.0, cfg.Dimensions.Width)
+		assert.Equal(t, 297.0, cfg.Dimensions.Height)
+	})
+
+	t.Run("when dimensions has valid values, should change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithDimensions(80, 80).Build()
+
+		assert.Equal(t, 80.0, cfg.Dimensions.Width)
+		assert.Equal(t, 80.0, cfg.Dimensions.Height)
+	})
+
+	t.Run("when dimensions are set and page size too, should use dimensions values", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithPageSize(pagesize.A1).WithDimensions(80, 80).Build()
+
+		assert.Equal(t, 80.0, cfg.Dimensions.Width)
+		assert.Equal(t, 80.0, cfg.Dimensions.Height)
+	})
+}
+
+func TestCfgBuilder_WithTopMargin(t *testing.T) {
+	t.Run("when top is invalid, should not change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithTopMargin(-1).Build()
+
+		assert.Equal(t, 10.0, cfg.Margins.Top)
+	})
+
+	t.Run("when top is valid, should change the default value", func(t *testing.T) {
+		sut := config.NewBuilder()
+
+		cfg := sut.WithTopMargin(5).Build()
+
+		assert.Equal(t, 5.0, cfg.Margins.Top)
+	})
+}
