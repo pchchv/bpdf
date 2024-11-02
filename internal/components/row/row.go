@@ -4,6 +4,7 @@ package row
 import (
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
+	"github.com/pchchv/bpdf/node"
 	"github.com/pchchv/bpdf/properties"
 )
 
@@ -13,6 +14,37 @@ type Row struct {
 	cols       []core.Col
 	style      *properties.Cell
 	config     *entity.Config
+}
+
+// GetColumns returns the columns of a core.Row.
+func (r *Row) GetColumns() []core.Col {
+	return r.cols
+}
+
+// GetStructure returns the Structure of a core.Row.
+func (r *Row) GetStructure() *node.Node[core.Structure] {
+	detailsMap := r.style.ToMap()
+	str := core.Structure{
+		Type:    "row",
+		Value:   r.height,
+		Details: detailsMap,
+	}
+	node := node.New(str)
+	for _, c := range r.cols {
+		inner := c.GetStructure()
+		node.AddNext(inner)
+	}
+
+	return node
+}
+
+// GetHeight returns the height of a core.Row.
+func (r *Row) GetHeight(provider core.Provider, cell *entity.Cell) float64 {
+	if r.height == 0 {
+		r.height = r.getBiggestCol(provider, cell)
+	}
+
+	return r.height
 }
 
 // Returns the height of the row content.
