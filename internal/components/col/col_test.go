@@ -8,6 +8,7 @@ import (
 	"github.com/pchchv/bpdf/internal/fixture"
 	"github.com/pchchv/bpdf/mocks"
 	"github.com/pchchv/bpdf/properties"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCol_Render(t *testing.T) {
@@ -47,5 +48,45 @@ func TestCol_Render(t *testing.T) {
 		provider.AssertNumberOfCalls(t, "CreateCol", 1)
 		component.AssertNumberOfCalls(t, "Render", 1)
 		component.AssertNumberOfCalls(t, "SetConfig", 1)
+	})
+}
+
+func TestCol_GetSize(t *testing.T) {
+	t.Run("when size defined in creation, should use it", func(t *testing.T) {
+		c := col.New(12)
+
+		size := c.GetSize()
+
+		assert.Equal(t, 12, size)
+	})
+
+	t.Run("when size not defined in creation, should use config max grid size", func(t *testing.T) {
+		c := col.New()
+		c.SetConfig(&entity.Config{MaxGridSize: 14})
+
+		size := c.GetSize()
+
+		assert.Equal(t, 14, size)
+	})
+}
+
+func TestCol_GetHeight(t *testing.T) {
+	t.Run("when column has two components, should return the largest", func(t *testing.T) {
+		cell := fixture.CellEntity()
+		cfg := &entity.Config{MaxGridSize: 12}
+		provider := mocks.NewProvider(t)
+		component := mocks.NewComponent(t)
+		component.EXPECT().GetHeight(provider, &cell).Return(10.0)
+		component.EXPECT().SetConfig(cfg)
+		component2 := mocks.NewComponent(t)
+		component2.EXPECT().GetHeight(provider, &cell).Return(15.0)
+		component2.EXPECT().SetConfig(cfg)
+		sut := col.New(12).Add(component, component2)
+		sut.SetConfig(cfg)
+
+		height := sut.GetHeight(provider, &cell)
+
+		component.AssertNumberOfCalls(t, "GetHeight", 1)
+		assert.Equal(t, height, 15.0)
 	})
 }
