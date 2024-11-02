@@ -16,6 +16,15 @@ type Col struct {
 	style      *properties.Cell
 }
 
+// New is responsible to create an instance of core.Col.
+func New(size ...int) core.Col {
+	if len(size) == 0 {
+		return &Col{isMax: true}
+	}
+
+	return &Col{size: size[0]}
+}
+
 // Add is responsible to add a component to a core.Col.
 func (c *Col) Add(components ...core.Component) core.Col {
 	c.components = append(c.components, components...)
