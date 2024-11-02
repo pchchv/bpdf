@@ -76,6 +76,22 @@ func (r *Row) Render(provider core.Provider, cell entity.Cell) {
 	provider.CreateRow(cell.Height)
 }
 
+// WithStyle sets the style of a Row.
+func (r *Row) WithStyle(style *properties.Cell) core.Row {
+	r.style = style
+	return r
+}
+
+// Add is responsible to add one or more core.Col to a core.Row.
+func (r *Row) Add(cols ...core.Col) core.Row {
+	r.cols = append(r.cols, cols...)
+	if r.autoHeight {
+		r.resetHeight()
+	}
+
+	return r
+}
+
 // Returns the height of the row content.
 func (r *Row) getBiggestCol(provider core.Provider, cell *entity.Cell) float64 {
 	greaterHeight := 0.0
