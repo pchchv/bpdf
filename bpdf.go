@@ -42,3 +42,13 @@ func getConfig(configs ...*entity.Config) *entity.Config {
 
 	return config.NewBuilder().Build()
 }
+
+func (m *Bpdf) processPage(pages []core.Page) ([]byte, error) {
+	innerCtx := m.cell.Copy()
+	innerProvider := getProvider(cache.NewMutexDecorator(cache.New()), m.config)
+	for _, page := range pages {
+		page.Render(innerProvider, innerCtx)
+	}
+
+	return innerProvider.GenerateBytes()
+}
