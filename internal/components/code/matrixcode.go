@@ -14,6 +14,20 @@ type MatrixCode struct {
 	config *entity.Config
 }
 
+// NewMatrix is responsible to create an instance of a MatrixCode.
+func NewMatrix(code string, barcodeProps ...properties.Rect) core.Component {
+	prop := properties.Rect{}
+	if len(barcodeProps) > 0 {
+		prop = barcodeProps[0]
+	}
+	prop.MakeValid()
+
+	return &MatrixCode{
+		code: code,
+		prop: prop,
+	}
+}
+
 // SetConfig sets the configuration of a MatrixCode.
 func (m *MatrixCode) SetConfig(config *entity.Config) {
 	m.config = config
