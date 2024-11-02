@@ -4,6 +4,7 @@ package col
 import (
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
+	"github.com/pchchv/bpdf/node"
 	"github.com/pchchv/bpdf/properties"
 )
 
@@ -30,4 +31,53 @@ func (c *Col) Render(provider core.Provider, cell entity.Cell, createCell bool) 
 	for _, component := range c.components {
 		component.Render(provider, &cell)
 	}
+}
+
+// GetSize returns the size of a core.Col.
+func (c *Col) GetSize() int {
+	if c.isMax {
+		return c.config.MaxGridSize
+	}
+
+	return c.size
+}
+
+// GetHeight returns the height of the column content
+func (c *Col) GetHeight(provider core.Provider, cell *entity.Cell) float64 {
+	innerCell := cell.Copy()
+	percent := float64(c.GetSize()) / float64(c.config.MaxGridSize)
+	innerCell.Width *= percent
+	greaterHeight := 0.0
+	for _, component := range c.components {
+		height := component.GetHeight(provider, &innerCell)
+		if greaterHeight < height {
+			greaterHeight = height
+		}
+	}
+
+	return greaterHeight
+}
+
+// GetStructure returns the Structure of a core.Col.
+func (c *Col) GetStructure() *node.Node[core.Structure] {
+	str := core.Structure{
+		Type:    "col",
+		Value:   c.size,
+		Details: c.style.ToMap(),
+	}
+
+	if c.isMax {
+		if len(str.Details) == 0 {
+			str.Details = make(map[string]interface{})
+		}
+		str.Details["is_max"] = true
+	}
+
+	node := node.New(str)
+	for _, c := range c.components {
+		inner := c.GetStructure()
+		node.AddNext(inner)
+	}
+
+	return node
 }
