@@ -81,3 +81,17 @@ func (c *Col) GetStructure() *node.Node[core.Structure] {
 
 	return node
 }
+
+// SetConfig set the config for the component.
+func (c *Col) SetConfig(config *entity.Config) {
+	c.config = config
+	for _, component := range c.components {
+		component.SetConfig(config)
+	}
+}
+
+// WithStyle sets the style for the column.
+func (c *Col) WithStyle(style *properties.Cell) core.Col {
+	c.style = style
+	return c
+}
