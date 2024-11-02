@@ -47,6 +47,35 @@ func (r *Row) GetHeight(provider core.Provider, cell *entity.Cell) float64 {
 	return r.height
 }
 
+// SetConfig sets the Row configuration.
+func (r *Row) SetConfig(config *entity.Config) {
+	r.config = config
+	for _, cols := range r.cols {
+		cols.SetConfig(config)
+	}
+}
+
+// Render renders a Row into a PDF context.
+func (r *Row) Render(provider core.Provider, cell entity.Cell) {
+	cell.Height = r.GetHeight(provider, &cell)
+	innerCell := cell.Copy()
+	if r.style != nil {
+		provider.CreateCol(cell.Width, cell.Height, r.config, r.style)
+	}
+
+	for _, col := range r.cols {
+		size := col.GetSize()
+		parentWidth := cell.Width
+		percent := float64(size) / float64(r.config.MaxGridSize)
+		colDimension := parentWidth * percent
+		innerCell.Width = colDimension
+		col.Render(provider, innerCell, r.style == nil)
+		innerCell.X += colDimension
+	}
+
+	provider.CreateRow(cell.Height)
+}
+
 // Returns the height of the row content.
 func (r *Row) getBiggestCol(provider core.Provider, cell *entity.Cell) float64 {
 	greaterHeight := 0.0
