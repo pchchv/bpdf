@@ -16,9 +16,25 @@ type Barcode struct {
 	config *entity.Config
 }
 
+// NewBar is responsible to create an instance of a Barcode:
+//   - code: value that must be placed in the barcode.
+//   - ps: set of settings that must be applied to the barcode.
+func NewBar(code string, ps ...properties.Barcode) core.Component {
+	prop := properties.Barcode{}
+	if len(ps) > 0 {
+		prop = ps[0]
+	}
+	prop.MakeValid()
+
+	return &Barcode{
+		code: code,
+		prop: prop,
+	}
+}
+
 // Render renders a Barcode into a PDF context.
 // The bpdf cal this method in process to generate the pdf:
-//   - provider: Is the creator provider used to generate the pdf.
+//   - provider: is the creator provider used to generate the pdf.
 //   - cell: cell represents the space available to draw the component.
 func (b *Barcode) Render(provider core.Provider, cell *entity.Cell) {
 	provider.AddBarCode(b.code, cell, &b.prop)
