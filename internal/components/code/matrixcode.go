@@ -4,6 +4,7 @@ package code
 import (
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
+	"github.com/pchchv/bpdf/internal/components/col"
 	"github.com/pchchv/bpdf/node"
 	"github.com/pchchv/bpdf/properties"
 )
@@ -26,6 +27,12 @@ func NewMatrix(code string, barcodeProps ...properties.Rect) core.Component {
 		code: code,
 		prop: prop,
 	}
+}
+
+// NewMatrixCol is responsible to create an instance of a MatrixCode wrapped in a Col.
+func NewMatrixCol(size int, code string, ps ...properties.Rect) core.Col {
+	matrixCode := NewMatrix(code, ps...)
+	return col.New(size).Add(matrixCode)
 }
 
 // SetConfig sets the configuration of a MatrixCode.
