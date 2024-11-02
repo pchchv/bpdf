@@ -4,6 +4,7 @@ package code
 import (
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
+	"github.com/pchchv/bpdf/internal/components/col"
 	"github.com/pchchv/bpdf/node"
 	"github.com/pchchv/bpdf/properties"
 )
@@ -12,6 +13,26 @@ type QrCode struct {
 	code   string
 	prop   properties.Rect
 	config *entity.Config
+}
+
+// NewQr is responsible to create an instance of a QrCode.
+func NewQr(code string, barcodeProps ...properties.Rect) core.Component {
+	prop := properties.Rect{}
+	if len(barcodeProps) > 0 {
+		prop = barcodeProps[0]
+	}
+	prop.MakeValid()
+
+	return &QrCode{
+		code: code,
+		prop: prop,
+	}
+}
+
+// NewQrCol is responsible to create an instance of a QrCode wrapped in a Col.
+func NewQrCol(size int, code string, ps ...properties.Rect) core.Col {
+	qrCode := NewQr(code, ps...)
+	return col.New(size).Add(qrCode)
 }
 
 // Render renders a QrCode into a PDF context.
