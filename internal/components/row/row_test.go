@@ -80,3 +80,11 @@ func TestRow_GetStructure(t *testing.T) {
 		col.AssertNumberOfCalls(t, "SetConfig", 1)
 	})
 }
+
+func TestRow_SetConfig(t *testing.T) {
+	t.Run("should call correctly", func(t *testing.T) {
+		sut := row.New(10)
+
+		sut.SetConfig(nil)
+	})
+}
