@@ -1,6 +1,7 @@
 package test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/pchchv/bpdf/core"
@@ -18,4 +19,14 @@ type Node struct {
 type BPDFTest struct {
 	t    *testing.T
 	node *node.Node[core.Structure]
+}
+
+func getParentDir(path string) (newPath string) {
+	dirs := strings.Split(path, "/")
+	dirs = dirs[:len(dirs)-2]
+	for _, dir := range dirs {
+		newPath += dir + "/"
+	}
+
+	return
 }
