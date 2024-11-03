@@ -1,6 +1,7 @@
 package test
 
 import (
+	"os"
 	"strings"
 	"testing"
 
@@ -29,4 +30,19 @@ func getParentDir(path string) (newPath string) {
 	}
 
 	return
+}
+
+func hasFileInPath(file string, path string) (bool, error) {
+	entries, err := os.ReadDir(path)
+	if err != nil {
+		return false, err
+	}
+
+	for _, entry := range entries {
+		if entry.Name() == file {
+			return true, nil
+		}
+	}
+
+	return false, nil
 }
