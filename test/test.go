@@ -1,12 +1,18 @@
 package test
 
 import (
+	"errors"
 	"os"
 	"strings"
 	"testing"
 
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/node"
+)
+
+var (
+	goModFile = "go.mod"
+	BPDFFile  = ".bpdf.yml"
 )
 
 type Node struct {
@@ -45,4 +51,34 @@ func hasFileInPath(file string, path string) (bool, error) {
 	}
 
 	return false, nil
+}
+
+func getBPDFConfigFilePathRecursive(path string) (string, error) {
+	hasBPDF, err := hasFileInPath(BPDFFile, path)
+	if err != nil {
+		return "", err
+	}
+
+	if hasBPDF {
+		return path, nil
+	}
+
+	hasGoMod, err := hasFileInPath(goModFile, path)
+	if err != nil {
+		return "", err
+	}
+
+	if hasGoMod {
+		return "", errors.New("found go.mod but not .bpdf.yml")
+	}
+
+	parentPath := getParentDir(path)
+	return getBPDFConfigFilePathRecursive(parentPath)
+}
+
+func getBPDFConfigFilePath() (string, error) {
+	path, _ := os.Getwd()
+	path += "/"
+
+	return getBPDFConfigFilePathRecursive(path)
 }
