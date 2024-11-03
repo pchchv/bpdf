@@ -16,6 +16,23 @@ type Row struct {
 	config     *entity.Config
 }
 
+// New is responsible to create a core.Row.
+// Height is an optional parameter that,
+// if not sent, will be calculated automatically
+// Height is defined in mm.
+func New(height ...float64) core.Row {
+	autoHeight := false
+	if len(height) == 0 {
+		height = append(height, 0)
+		autoHeight = true
+	}
+
+	return &Row{
+		height:     height[0],
+		autoHeight: autoHeight,
+	}
+}
+
 // GetColumns returns the columns of a core.Row.
 func (r *Row) GetColumns() []core.Col {
 	return r.cols
