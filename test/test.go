@@ -60,6 +60,21 @@ func (m *BPDFTest) Assert(structure *node.Node[core.Structure]) *BPDFTest {
 	return m
 }
 
+func (m *BPDFTest) buildNode(node *node.Node[core.Structure]) *Node {
+	data := node.GetData()
+	actual := &Node{
+		Type:    data.Type,
+		Value:   data.Value,
+		Details: data.Details,
+	}
+	nexts := node.GetNexts()
+	for _, next := range nexts {
+		actual.Nodes = append(actual.Nodes, m.buildNode(next))
+	}
+
+	return actual
+}
+
 func getParentDir(path string) (newPath string) {
 	dirs := strings.Split(path, "/")
 	dirs = dirs[:len(dirs)-2]
