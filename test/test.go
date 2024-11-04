@@ -14,8 +14,9 @@ import (
 )
 
 var (
-	goModFile = "go.mod"
-	BPDFFile  = ".bpdf.yml"
+	configSingleton *Config = nil
+	goModFile               = "go.mod"
+	BPDFFile                = ".bpdf.yml"
 )
 
 type Node struct {
