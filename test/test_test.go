@@ -9,6 +9,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const file = "bpdf_test.json"
+
 func TestNew(t *testing.T) {
 	t.Run("when called first, should setup singleton and set t", func(t *testing.T) {
 		sut := New(t)
@@ -64,5 +66,27 @@ func TestBPDFTest_Save(t *testing.T) {
 		_ = json.Unmarshal(bytes, testNode)
 		assert.Equal(t, "bpdf", testNode.Type)
 		assert.Equal(t, "page", testNode.Nodes[0].Type)
+	})
+}
+
+func TestBPDFTest_Equals(t *testing.T) {
+	t.Run("when file saved is not equals to current, should fail", func(t *testing.T) {
+		n := fixture.Node("not_bpdf")
+		innerT := &testing.T{}
+		sut := New(innerT).Assert(n)
+
+		sut.Equals(file)
+
+		assert.True(t, innerT.Failed())
+	})
+
+	t.Run("when file saved is equals to current, should be success", func(t *testing.T) {
+		n := fixture.Node("bpdf")
+		innerT := &testing.T{}
+		sut := New(innerT).Assert(n)
+
+		sut.Equals(file)
+
+		assert.False(t, innerT.Failed())
 	})
 }
