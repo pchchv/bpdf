@@ -2,12 +2,14 @@ package test
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"strings"
 	"testing"
 
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/node"
+	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v3"
 )
 
@@ -27,6 +29,28 @@ type Node struct {
 type BPDFTest struct {
 	t    *testing.T
 	node *node.Node[core.Structure]
+}
+
+// New creates the BPDFTest instance to unit tests.
+func New(t *testing.T) *BPDFTest {
+	if configSingleton == nil {
+		path, err := getBPDFConfigFilePath()
+		if err != nil {
+			assert.Fail(t, fmt.Sprintf("could not find .bpdf.yml file. %s", err.Error()))
+		}
+
+		cfg, err := loadBPDFConfigFile(path)
+		if err != nil {
+			assert.Fail(t, fmt.Sprintf("could not parse .bpdf.yml. %s", err.Error()))
+		}
+
+		cfg.AbsolutePath = path
+		configSingleton = cfg
+	}
+
+	return &BPDFTest{
+		t: t,
+	}
 }
 
 func getParentDir(path string) (newPath string) {
