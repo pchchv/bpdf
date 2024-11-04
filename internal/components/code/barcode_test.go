@@ -8,6 +8,7 @@ import (
 	"github.com/pchchv/bpdf/internal/fixture"
 	"github.com/pchchv/bpdf/mocks"
 	"github.com/pchchv/bpdf/properties"
+	"github.com/pchchv/bpdf/test"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -42,5 +43,19 @@ func TestBarcode_GetHeight(t *testing.T) {
 
 		height := sut.GetHeight(provider, &cell)
 		assert.Equal(t, height, cell.Width*0.2)
+	})
+}
+
+func TestNewBar(t *testing.T) {
+	t.Run("when prop is not sent, should use default", func(t *testing.T) {
+		sut := code.NewBar("code")
+
+		test.New(t).Assert(sut.GetStructure()).Equals("components/codes/new_bar_default_prop.json")
+	})
+
+	t.Run("when prop is sent, should use the provided", func(t *testing.T) {
+		sut := code.NewBar("code", fixture.BarcodeProp())
+
+		test.New(t).Assert(sut.GetStructure()).Equals("components/codes/new_bar_custom_prop.json")
 	})
 }
