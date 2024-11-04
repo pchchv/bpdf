@@ -9,6 +9,7 @@ import (
 	"github.com/pchchv/bpdf/internal/components/row"
 	"github.com/pchchv/bpdf/internal/fixture"
 	"github.com/pchchv/bpdf/mocks"
+	"github.com/pchchv/bpdf/test"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -86,5 +87,26 @@ func TestRow_SetConfig(t *testing.T) {
 		sut := row.New(10)
 
 		sut.SetConfig(nil)
+	})
+}
+
+func TestNew(t *testing.T) {
+	t.Run("when there is no cols", func(t *testing.T) {
+		r := row.New(10)
+
+		test.New(t).Assert(r.GetStructure()).Equals("components/rows/new_empty_col.json")
+	})
+
+	t.Run("when has component, should retrieve components", func(t *testing.T) {
+		r := row.New(12).Add(col.New(12))
+
+		test.New(t).Assert(r.GetStructure()).Equals("components/rows/new_filled_col.json")
+	})
+
+	t.Run("when has prop, should apply correctly", func(t *testing.T) {
+		prop := fixture.CellProp()
+		r := row.New(12).WithStyle(&prop)
+
+		test.New(t).Assert(r.GetStructure()).Equals("components/rows/new_col_with_prop.json")
 	})
 }
