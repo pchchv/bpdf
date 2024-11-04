@@ -54,6 +54,12 @@ func New(t *testing.T) *BPDFTest {
 	}
 }
 
+// Assert validates if the structure is the same as defined by Equals method.
+func (m *BPDFTest) Assert(structure *node.Node[core.Structure]) *BPDFTest {
+	m.node = structure
+	return m
+}
+
 func getParentDir(path string) (newPath string) {
 	dirs := strings.Split(path, "/")
 	dirs = dirs[:len(dirs)-2]
