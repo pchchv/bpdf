@@ -1,6 +1,7 @@
 package test
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -57,6 +58,35 @@ func New(t *testing.T) *BPDFTest {
 // Assert validates if the structure is the same as defined by Equals method.
 func (m *BPDFTest) Assert(structure *node.Node[core.Structure]) *BPDFTest {
 	m.node = structure
+	return m
+}
+
+// Equals defines which file will be loaded to do the comparison.
+func (m *BPDFTest) Equals(file string) *BPDFTest {
+	actual := m.buildNode(m.node)
+	actualBytes, _ := json.Marshal(actual)
+	actualString := string(actualBytes)
+	indentedExpectBytes, err := os.ReadFile(configSingleton.getAbsoluteFilePath(file))
+	if err != nil {
+		assert.Fail(m.t, err.Error())
+	}
+
+	savedNode := &Node{}
+	_ = json.Unmarshal(indentedExpectBytes, savedNode)
+	expectedBytes, _ := json.Marshal(savedNode)
+
+	assert.Equal(m.t, string(expectedBytes), actualString)
+	return m
+}
+
+// Save is an auxiliary method to update the file to be asserted.
+func (m *BPDFTest) Save(file string) *BPDFTest {
+	actual := m.buildNode(m.node)
+	actualBytes, _ := json.MarshalIndent(actual, "", "\t")
+	if err := os.WriteFile(configSingleton.getAbsoluteFilePath(file), actualBytes, os.ModePerm); err != nil {
+		assert.Fail(m.t, err.Error())
+	}
+
 	return m
 }
 
