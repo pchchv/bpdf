@@ -8,6 +8,7 @@ import (
 
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/node"
+	"gopkg.in/yaml.v3"
 )
 
 var (
@@ -81,4 +82,18 @@ func getBPDFConfigFilePath() (string, error) {
 	path += "/"
 
 	return getBPDFConfigFilePathRecursive(path)
+}
+
+func loadBPDFConfigFile(path string) (*Config, error) {
+	bytes, err := os.ReadFile(path + "/" + BPDFFile)
+	if err != nil {
+		return nil, err
+	}
+
+	cfg := &Config{}
+	if err = yaml.Unmarshal(bytes, cfg); err != nil {
+		return nil, err
+	}
+
+	return cfg, nil
 }
