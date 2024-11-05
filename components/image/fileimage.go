@@ -2,6 +2,8 @@
 package image
 
 import (
+	"github.com/pchchv/bpdf/components/col"
+	"github.com/pchchv/bpdf/components/row"
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/node"
@@ -26,6 +28,14 @@ func NewFromFile(path string, ps ...properties.Rect) core.Component {
 		path: path,
 		prop: prop,
 	}
+}
+
+// NewFromFileRow is responsible to create an instance of
+// an Image wrapped in a automatic Row.
+func NewAutoFromFileRow(path string, ps ...properties.Rect) core.Row {
+	image := NewFromFile(path, ps...)
+	c := col.New().Add(image)
+	return row.New().Add(c)
 }
 
 // Render renders an Image into a PDF context.
