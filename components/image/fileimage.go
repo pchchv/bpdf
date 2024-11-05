@@ -14,6 +14,20 @@ type FileImage struct {
 	config *entity.Config
 }
 
+// NewFromFile is responsible to create an instance of an Image.
+func NewFromFile(path string, ps ...properties.Rect) core.Component {
+	prop := properties.Rect{}
+	if len(ps) > 0 {
+		prop = ps[0]
+	}
+	prop.MakeValid()
+
+	return &FileImage{
+		path: path,
+		prop: prop,
+	}
+}
+
 // Render renders an Image into a PDF context.
 func (f *FileImage) Render(provider core.Provider, cell *entity.Cell) {
 	provider.AddImageFromFile(f.path, cell, &f.prop)
