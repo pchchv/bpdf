@@ -85,3 +85,31 @@ func TestAutoNewMatrixRow(t *testing.T) {
 		test.New(t).Assert(sut.GetStructure()).Equals("components/codes/new_auto_matrix_row_custom_prop.json")
 	})
 }
+
+func TestTestNewMatrixCol(t *testing.T) {
+	t.Run("when prop is not sent, should use default", func(t *testing.T) {
+		sut := code.NewMatrixCol(12, "code")
+
+		test.New(t).Assert(sut.GetStructure()).Equals("components/codes/new_matrix_col_default_prop.json")
+	})
+
+	t.Run("when prop is sent, should use the provided", func(t *testing.T) {
+		sut := code.NewMatrixCol(12, "code", fixture.RectProp())
+
+		test.New(t).Assert(sut.GetStructure()).Equals("components/codes/new_matrix_col_custom_prop.json")
+	})
+}
+
+func TestNewMatrixRow(t *testing.T) {
+	t.Run("when prop is not sent, should use default", func(t *testing.T) {
+		sut := code.NewMatrixRow(10, "code")
+
+		test.New(t).Assert(sut.GetStructure()).Equals("components/codes/new_matrix_row_default_prop.json")
+	})
+
+	t.Run("when prop is sent, should use the provided", func(t *testing.T) {
+		sut := code.NewMatrixRow(10, "code", fixture.RectProp())
+
+		test.New(t).Assert(sut.GetStructure()).Equals("components/codes/new_matrix_row_custom_prop.json")
+	})
+}
