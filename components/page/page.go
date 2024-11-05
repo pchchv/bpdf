@@ -71,3 +71,9 @@ func (p *Page) GetStructure() *node.Node[core.Structure] {
 	}
 	return n
 }
+
+// Add adds one or more rows to the Page.
+func (p *Page) Add(rows ...core.Row) core.Page {
+	p.rows = append(p.rows, rows...)
+	return p
+}
