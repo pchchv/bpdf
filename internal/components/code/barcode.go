@@ -7,6 +7,7 @@ import (
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/internal/components/col"
+	"github.com/pchchv/bpdf/internal/components/row"
 	"github.com/pchchv/bpdf/node"
 	"github.com/pchchv/bpdf/properties"
 )
@@ -51,6 +52,16 @@ func NewBarRow(height float64, code string, ps ...properties.Barcode) core.Row {
 	bar := NewBar(code, ps...)
 	c := col.New().Add(bar)
 	return row.New(height).Add(c)
+}
+
+// NewAutoBarRow is responsible to create an instance of a Barcode wrapped in a Row with automatic height.
+// using this method the col size will be automatically set to the maximum value
+//   - code: The value that must be placed in the barcode
+//   - ps: A set of settings that must be applied to the barcode
+func NewAutoBarRow(code string, ps ...properties.Barcode) core.Row {
+	bar := NewBar(code, ps...)
+	c := col.New().Add(bar)
+	return row.New().Add(c)
 }
 
 // Render renders a Barcode into a PDF context.
