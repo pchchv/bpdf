@@ -10,6 +10,7 @@ import (
 	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/internal/cache"
 	"github.com/pchchv/bpdf/internal/providers/gofpdf"
+	"github.com/pchchv/bpdf/node"
 )
 
 type Bpdf struct {
@@ -27,6 +28,26 @@ type Bpdf struct {
 	currentHeight float64
 	// Processing
 	pool async.Processor[[]core.Page, []byte]
+}
+
+// GetCurrentConfig is responsible for returning the current settings from the file.
+func (m *Bpdf) GetCurrentConfig() *entity.Config {
+	return m.config
+}
+
+// GetStructure is responsible for return the component tree,
+// this is useful on unit tests cases.
+func (m *Bpdf) GetStructure() *node.Node[core.Structure] {
+	m.fillPageToAddNew()
+	node := node.New(core.Structure{
+		Type:    "maroto",
+		Details: m.config.ToMap(),
+	})
+	for _, p := range m.pages {
+		inner := p.GetStructure()
+		node.AddNext(inner)
+	}
+	return node
 }
 
 func (m *Bpdf) fillPageToAddNew() {
