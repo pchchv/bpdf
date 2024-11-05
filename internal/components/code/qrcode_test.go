@@ -9,6 +9,7 @@ import (
 	"github.com/pchchv/bpdf/internal/components/code"
 	"github.com/pchchv/bpdf/internal/fixture"
 	"github.com/pchchv/bpdf/mocks"
+	"github.com/pchchv/bpdf/test"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -54,5 +55,33 @@ func TestQrCode_GetHeight(t *testing.T) {
 
 		height := sut.GetHeight(provider, &cell)
 		assert.Equal(t, height, cell.Width/2)
+	})
+}
+
+func TestNewQr(t *testing.T) {
+	t.Run("when prop is not sent, should use default", func(t *testing.T) {
+		sut := code.NewQr("code")
+
+		test.New(t).Assert(sut.GetStructure()).Equals("components/codes/new_qr_default_prop.json")
+	})
+
+	t.Run("when prop is sent, should use the provided", func(t *testing.T) {
+		sut := code.NewQr("code", fixture.RectProp())
+
+		test.New(t).Assert(sut.GetStructure()).Equals("components/codes/new_qr_custom_prop.json")
+	})
+}
+
+func TestNewAutoQrRow(t *testing.T) {
+	t.Run("when prop is not sent, should use default", func(t *testing.T) {
+		sut := code.NewAutoQrRow("code")
+
+		test.New(t).Assert(sut.GetStructure()).Equals("components/codes/new_auto_qr_row_default_prop.json")
+	})
+
+	t.Run("when prop is sent, should use the provided", func(t *testing.T) {
+		sut := code.NewAutoQrRow("code", fixture.RectProp())
+
+		test.New(t).Assert(sut.GetStructure()).Equals("components/codes/new_auto_qr_row_custom_prop.json")
 	})
 }
