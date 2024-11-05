@@ -5,9 +5,12 @@ import (
 
 	"github.com/pchchv/bpdf/components/image"
 	"github.com/pchchv/bpdf/components/page"
+	"github.com/pchchv/bpdf/consts/extension"
 	"github.com/pchchv/bpdf/core"
+	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/internal/fixture"
 	"github.com/pchchv/bpdf/mocks"
+	"github.com/pchchv/bpdf/properties"
 	"github.com/pchchv/bpdf/test"
 	"github.com/stretchr/testify/assert"
 )
@@ -53,5 +56,86 @@ func TestPage_SetNumber(t *testing.T) {
 		sut.SetNumber(1, 2)
 
 		assert.Equal(t, 1, sut.GetNumber())
+	})
+}
+
+func TestPage_Render(t *testing.T) {
+	t.Run("when there is no background image and there is no page pattern, should call row render correctly", func(t *testing.T) {
+		cell := fixture.CellEntity()
+		prop := fixture.PageProp()
+		prop.Pattern = ""
+		cfg := &entity.Config{}
+		provider := mocks.NewProvider(t)
+		row := mocks.NewRow(t)
+		row.EXPECT().Render(provider, cell)
+		row.EXPECT().GetHeight(provider, &cell).Return(10.0)
+		row.EXPECT().SetConfig(cfg)
+		sut := page.New(prop)
+		sut.Add(row)
+		sut.SetConfig(cfg)
+
+		sut.Render(provider, cell)
+
+		row.AssertNumberOfCalls(t, "Render", 1)
+		row.AssertNumberOfCalls(t, "GetHeight", 1)
+	})
+
+	t.Run("when there is background image and there is no page pattern, should call row render and provider correctly", func(t *testing.T) {
+		cell := fixture.CellEntity()
+		prop := fixture.PageProp()
+		prop.Pattern = ""
+		cfg := &entity.Config{
+			BackgroundImage: &entity.Image{
+				Bytes:     []byte{1, 2, 3},
+				Extension: extension.Jpg,
+			},
+		}
+		rectProp := &properties.Rect{}
+		rectProp.MakeValid()
+		provider := mocks.NewProvider(t)
+		provider.EXPECT().AddBackgroundImageFromBytes(cfg.BackgroundImage.Bytes, &cell, rectProp, cfg.BackgroundImage.Extension)
+		row := mocks.NewRow(t)
+		row.EXPECT().Render(provider, cell)
+		row.EXPECT().GetHeight(provider, &cell).Return(10.0)
+		row.EXPECT().SetConfig(cfg)
+		sut := page.New(prop)
+		sut.Add(row)
+		sut.SetConfig(cfg)
+
+		sut.Render(provider, cell)
+
+		provider.AssertNumberOfCalls(t, "AddBackgroundImageFromBytes", 1)
+		row.AssertNumberOfCalls(t, "Render", 1)
+		row.AssertNumberOfCalls(t, "GetHeight", 1)
+	})
+
+	t.Run("when there is background image and there is page pattern, should call row render and provider correctly", func(t *testing.T) {
+		cell := fixture.CellEntity()
+		prop := fixture.PageProp()
+		cfg := &entity.Config{
+			BackgroundImage: &entity.Image{
+				Bytes:     []byte{1, 2, 3},
+				Extension: extension.Jpg,
+			},
+		}
+		rectProp := &properties.Rect{}
+		rectProp.MakeValid()
+		provider := mocks.NewProvider(t)
+		provider.EXPECT().AddBackgroundImageFromBytes(cfg.BackgroundImage.Bytes, &cell, rectProp, cfg.BackgroundImage.Extension)
+		provider.EXPECT().AddText("0 / 0", &cell, prop.GetNumberTextProp(cell.Height))
+		row := mocks.NewRow(t)
+		row.EXPECT().Render(provider, cell)
+		row.EXPECT().GetHeight(provider, &cell).Return(10.0)
+		row.EXPECT().SetConfig(cfg)
+		sut := page.New(prop)
+		sut.Add(row)
+		sut.SetConfig(cfg)
+
+		sut.Render(provider, cell)
+
+		provider.AssertNumberOfCalls(t, "AddBackgroundImageFromBytes", 1)
+		provider.AssertNumberOfCalls(t, "AddText", 1)
+		row.AssertNumberOfCalls(t, "Render", 1)
+		row.AssertNumberOfCalls(t, "GetHeight", 1)
 	})
 }
