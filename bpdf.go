@@ -113,6 +113,19 @@ func (m *Bpdf) addRow(r core.Row) {
 	m.rows = append(m.rows, r)
 }
 
+func (m *Bpdf) addRows(rows ...core.Row) {
+	for _, row := range rows {
+		m.addRow(row)
+	}
+}
+
+func (m *Bpdf) setConfig() {
+	for i, page := range m.pages {
+		page.SetConfig(m.config)
+		page.SetNumber(i+1, len(m.pages))
+	}
+}
+
 func getProvider(cache cache.Cache, cfg *entity.Config) core.Provider {
 	deps := gofpdf.NewBuilder().Build(cfg, cache)
 	provider := gofpdf.New(deps)
