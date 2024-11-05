@@ -6,6 +6,7 @@ package code
 import (
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
+	"github.com/pchchv/bpdf/internal/components/col"
 	"github.com/pchchv/bpdf/node"
 	"github.com/pchchv/bpdf/properties"
 )
@@ -30,6 +31,26 @@ func NewBar(code string, ps ...properties.Barcode) core.Component {
 		code: code,
 		prop: prop,
 	}
+}
+
+// NewBarCol is responsible to create an instance of a Barcode wrapped in a Col.
+//   - size: O tamanho da coluna
+//   - code: The value that must be placed in the barcode
+//   - ps: A set of settings that must be applied to the barcode
+func NewBarCol(size int, code string, ps ...properties.Barcode) core.Col {
+	bar := NewBar(code, ps...)
+	return col.New(size).Add(bar)
+}
+
+// NewBarRow is responsible to create an instance of a Barcode wrapped in a Row.
+// using this method the col size will be automatically set to the maximum value
+//   - height: The height of the line
+//   - code: The value that must be placed in the barcode
+//   - ps: A set of settings that must be applied to the barcode
+func NewBarRow(height float64, code string, ps ...properties.Barcode) core.Row {
+	bar := NewBar(code, ps...)
+	c := col.New().Add(bar)
+	return row.New(height).Add(c)
 }
 
 // Render renders a Barcode into a PDF context.
