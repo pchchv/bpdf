@@ -47,3 +47,13 @@ func (p *Page) SetNumber(number int, total int) {
 	p.number = number
 	p.total = total
 }
+
+// GetRows returns the rows of the Page.
+func (p *Page) GetRows() []core.Row {
+	return p.rows
+}
+
+// GetNumber returns the Page number.
+func (p *Page) GetNumber() int {
+	return p.number
+}
