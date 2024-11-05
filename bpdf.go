@@ -2,6 +2,9 @@ package bpdf
 
 import (
 	"github.com/f-amaral/go-async/async"
+	"github.com/pchchv/bpdf/components/col"
+	"github.com/pchchv/bpdf/components/page"
+	"github.com/pchchv/bpdf/components/row"
 	"github.com/pchchv/bpdf/config"
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
@@ -24,6 +27,27 @@ type Bpdf struct {
 	currentHeight float64
 	// Processing
 	pool async.Processor[[]core.Page, []byte]
+}
+
+func (m *Bpdf) fillPageToAddNew() {
+	var p core.Page
+	space := m.cell.Height - m.currentHeight - m.footerHeight
+	c := col.New(m.config.MaxGridSize)
+	spaceRow := row.New(space)
+	spaceRow.Add(c)
+	m.rows = append(m.rows, spaceRow)
+	m.rows = append(m.rows, m.footer...)
+	if m.config.PageNumber != nil {
+		p = page.New(*m.config.PageNumber)
+	} else {
+		p = page.New()
+	}
+
+	p.SetConfig(m.config)
+	p.Add(m.rows...)
+	m.pages = append(m.pages, p)
+	m.rows = nil
+	m.currentHeight = 0
 }
 
 func getProvider(cache cache.Cache, cfg *entity.Config) core.Provider {
