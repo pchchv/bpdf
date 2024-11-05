@@ -2,10 +2,10 @@
 package code
 
 import (
+	"github.com/pchchv/bpdf/components/col"
+	"github.com/pchchv/bpdf/components/row"
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
-	"github.com/pchchv/bpdf/internal/components/col"
-	"github.com/pchchv/bpdf/internal/components/row"
 	"github.com/pchchv/bpdf/node"
 	"github.com/pchchv/bpdf/properties"
 )

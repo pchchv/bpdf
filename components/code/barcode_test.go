@@ -4,7 +4,7 @@ package code_test
 import (
 	"testing"
 
-	"github.com/pchchv/bpdf/internal/components/code"
+	"github.com/pchchv/bpdf/components/code"
 	"github.com/pchchv/bpdf/internal/fixture"
 	"github.com/pchchv/bpdf/mocks"
 	"github.com/pchchv/bpdf/properties"

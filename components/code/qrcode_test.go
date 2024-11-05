@@ -5,8 +5,8 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/pchchv/bpdf/components/code"
 	"github.com/pchchv/bpdf/core/entity"
-	"github.com/pchchv/bpdf/internal/components/code"
 	"github.com/pchchv/bpdf/internal/fixture"
 	"github.com/pchchv/bpdf/mocks"
 	"github.com/pchchv/bpdf/test"
