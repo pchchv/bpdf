@@ -50,6 +50,16 @@ func (m *Bpdf) GetStructure() *node.Node[core.Structure] {
 	return node
 }
 
+func (m *Bpdf) processPage(pages []core.Page) ([]byte, error) {
+	innerCtx := m.cell.Copy()
+	innerProvider := getProvider(cache.NewMutexDecorator(cache.New()), m.config)
+	for _, page := range pages {
+		page.Render(innerProvider, innerCtx)
+	}
+
+	return innerProvider.GenerateBytes()
+}
+
 func (m *Bpdf) fillPageToAddNew() {
 	var p core.Page
 	space := m.cell.Height - m.currentHeight - m.footerHeight
@@ -118,14 +128,4 @@ func getConfig(configs ...*entity.Config) *entity.Config {
 	}
 
 	return config.NewBuilder().Build()
-}
-
-func (m *Bpdf) processPage(pages []core.Page) ([]byte, error) {
-	innerCtx := m.cell.Copy()
-	innerProvider := getProvider(cache.NewMutexDecorator(cache.New()), m.config)
-	for _, page := range pages {
-		page.Render(innerProvider, innerCtx)
-	}
-
-	return innerProvider.GenerateBytes()
 }
