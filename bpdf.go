@@ -71,6 +71,38 @@ func (m *Bpdf) fillPageToAddNew() {
 	m.currentHeight = 0
 }
 
+func (m *Bpdf) addHeader() {
+	for _, headerRow := range m.header {
+		m.currentHeight += headerRow.GetHeight(m.provider, &m.cell)
+		m.rows = append(m.rows, headerRow)
+	}
+}
+
+func (m *Bpdf) addRow(r core.Row) {
+	if len(r.GetColumns()) == 0 {
+		r.Add(col.New())
+	}
+
+	maxHeight := m.cell.Height
+	r.SetConfig(m.config)
+	rowHeight := r.GetHeight(m.provider, &m.cell)
+	sumHeight := rowHeight + m.currentHeight + m.footerHeight
+	// Row smaller than the remain space on page
+	if sumHeight < maxHeight {
+		m.currentHeight += rowHeight
+		m.rows = append(m.rows, r)
+		return
+	}
+
+	// As row will extrapolate page, we will add empty space
+	// on the page to force a new page
+	m.fillPageToAddNew()
+	m.addHeader()
+	// AddRows row on the new page
+	m.currentHeight += rowHeight
+	m.rows = append(m.rows, r)
+}
+
 func getProvider(cache cache.Cache, cfg *entity.Config) core.Provider {
 	deps := gofpdf.NewBuilder().Build(cfg, cache)
 	provider := gofpdf.New(deps)
