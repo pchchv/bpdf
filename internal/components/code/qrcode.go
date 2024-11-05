@@ -5,6 +5,7 @@ import (
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/internal/components/col"
+	"github.com/pchchv/bpdf/internal/components/row"
 	"github.com/pchchv/bpdf/node"
 	"github.com/pchchv/bpdf/properties"
 )
@@ -33,6 +34,22 @@ func NewQr(code string, barcodeProps ...properties.Rect) core.Component {
 func NewQrCol(size int, code string, ps ...properties.Rect) core.Col {
 	qrCode := NewQr(code, ps...)
 	return col.New(size).Add(qrCode)
+}
+
+// NewQrRow is responsible to create an instance of a QrCode wrapped in a Row.
+func NewQrRow(height float64, code string, ps ...properties.Rect) core.Row {
+	qrCode := NewQr(code, ps...)
+	c := col.New().Add(qrCode)
+	return row.New(height).Add(c)
+}
+
+// NewAutoMatrixRow is responsible to create an instance of a qrcode wrapped in a Row with automatic height.
+//   - code: The value that must be placed in the qrcode
+//   - ps: A set of settings that must be applied to the qrcode
+func NewAutoQrRow(code string, ps ...properties.Rect) core.Row {
+	qrCode := NewQr(code, ps...)
+	c := col.New().Add(qrCode)
+	return row.New().Add(c)
 }
 
 // Render renders a QrCode into a PDF context.
