@@ -38,6 +38,19 @@ func NewAutoFromFileRow(path string, ps ...properties.Rect) core.Row {
 	return row.New().Add(c)
 }
 
+// NewFromFileCol is responsible to create an instance of an Image wrapped in a Col.
+func NewFromFileCol(size int, path string, ps ...properties.Rect) core.Col {
+	image := NewFromFile(path, ps...)
+	return col.New(size).Add(image)
+}
+
+// NewFromFileRow is responsible to create an instance of an Image wrapped in a Row.
+func NewFromFileRow(height float64, path string, ps ...properties.Rect) core.Row {
+	image := NewFromFile(path, ps...)
+	c := col.New().Add(image)
+	return row.New(height).Add(c)
+}
+
 // Render renders an Image into a PDF context.
 func (f *FileImage) Render(provider core.Provider, cell *entity.Cell) {
 	provider.AddImageFromFile(f.path, cell, &f.prop)
