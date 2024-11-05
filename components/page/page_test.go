@@ -5,8 +5,11 @@ import (
 
 	"github.com/pchchv/bpdf/components/image"
 	"github.com/pchchv/bpdf/components/page"
+	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/internal/fixture"
+	"github.com/pchchv/bpdf/mocks"
 	"github.com/pchchv/bpdf/test"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNew(t *testing.T) {
@@ -28,5 +31,27 @@ func TestNew(t *testing.T) {
 		sut.Add(row)
 
 		test.New(t).Assert(sut.GetStructure()).Equals("components/lines/new_page_custom_prop_and_with_rows.json")
+	})
+}
+
+func TestPage_GetRows(t *testing.T) {
+	t.Run("when called get rows, should return rows correctly", func(t *testing.T) {
+		row := mocks.NewRow(t)
+		sut := page.New()
+		sut.Add(row)
+
+		rows := sut.GetRows()
+
+		assert.Equal(t, []core.Row{row}, rows)
+	})
+}
+
+func TestPage_SetNumber(t *testing.T) {
+	t.Run("when called set number, should set correctly", func(t *testing.T) {
+		sut := page.New()
+
+		sut.SetNumber(1, 2)
+
+		assert.Equal(t, 1, sut.GetNumber())
 	})
 }
