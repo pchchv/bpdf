@@ -16,6 +16,18 @@ type Page struct {
 	prop   properties.PageNumber
 }
 
+// New is responsible to create a core.Page.
+func New(ps ...properties.PageNumber) core.Page {
+	prop := properties.PageNumber{}
+	if len(ps) > 0 {
+		prop = ps[0]
+	}
+
+	return &Page{
+		prop: prop,
+	}
+}
+
 // Render renders a Page into a PDF context.
 func (p *Page) Render(provider core.Provider, cell entity.Cell) {
 	prop := &properties.Rect{}
