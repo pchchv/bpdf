@@ -59,3 +59,31 @@ func TestNewBar(t *testing.T) {
 		test.New(t).Assert(sut.GetStructure()).Equals("components/codes/new_bar_custom_prop.json")
 	})
 }
+
+func TestNewBarCol(t *testing.T) {
+	t.Run("when prop is not sent, should use default", func(t *testing.T) {
+		sut := code.NewBarCol(12, "code")
+
+		test.New(t).Assert(sut.GetStructure()).Equals("components/codes/new_bar_col_default_prop.json")
+	})
+
+	t.Run("when prop is sent, should use the provided", func(t *testing.T) {
+		sut := code.NewBarCol(12, "code", fixture.BarcodeProp())
+
+		test.New(t).Assert(sut.GetStructure()).Equals("components/codes/new_bar_col_custom_prop.json")
+	})
+}
+
+func TestNewBarRow(t *testing.T) {
+	t.Run("when prop is not sent, should use default", func(t *testing.T) {
+		sut := code.NewBarRow(10, "code")
+
+		test.New(t).Assert(sut.GetStructure()).Equals("components/codes/new_bar_row_default_prop.json")
+	})
+
+	t.Run("when prop is sent, should use the provided", func(t *testing.T) {
+		sut := code.NewBarRow(10, "code", fixture.BarcodeProp())
+
+		test.New(t).Assert(sut.GetStructure()).Equals("components/codes/new_bar_row_custom_prop.json")
+	})
+}
