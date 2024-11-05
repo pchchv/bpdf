@@ -4,6 +4,7 @@ package page
 import (
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
+	"github.com/pchchv/bpdf/node"
 	"github.com/pchchv/bpdf/properties"
 )
 
@@ -56,4 +57,17 @@ func (p *Page) GetRows() []core.Row {
 // GetNumber returns the Page number.
 func (p *Page) GetNumber() int {
 	return p.number
+}
+
+// GetStructure returns the Structure of a Page.
+func (p *Page) GetStructure() *node.Node[core.Structure] {
+	n := node.New(
+		core.Structure{
+			Type: "page",
+		})
+	for _, r := range p.rows {
+		inner := r.GetStructure()
+		n.AddNext(inner)
+	}
+	return n
 }
