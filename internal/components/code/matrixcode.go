@@ -5,6 +5,7 @@ import (
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/internal/components/col"
+	"github.com/pchchv/bpdf/internal/components/row"
 	"github.com/pchchv/bpdf/node"
 	"github.com/pchchv/bpdf/properties"
 )
@@ -33,6 +34,22 @@ func NewMatrix(code string, barcodeProps ...properties.Rect) core.Component {
 func NewMatrixCol(size int, code string, ps ...properties.Rect) core.Col {
 	matrixCode := NewMatrix(code, ps...)
 	return col.New(size).Add(matrixCode)
+}
+
+// NewAutoMatrixRow is responsible to create an instance of a Matrix code wrapped in a Row with automatic height.
+//   - code: The value that must be placed in the matrixcode
+//   - ps: A set of settings that must be applied to the matrixcode
+func NewAutoMatrixRow(code string, ps ...properties.Rect) core.Row {
+	matrixCode := NewMatrix(code, ps...)
+	c := col.New().Add(matrixCode)
+	return row.New().Add(c)
+}
+
+// NewMatrixRow is responsible to create an instance of a MatrixCode wrapped in a Row.
+func NewMatrixRow(height float64, code string, ps ...properties.Rect) core.Row {
+	matrixCode := NewMatrix(code, ps...)
+	c := col.New().Add(matrixCode)
+	return row.New(height).Add(c)
 }
 
 // SetConfig sets the configuration of a MatrixCode.
