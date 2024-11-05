@@ -14,3 +14,36 @@ type Page struct {
 	config *entity.Config
 	prop   properties.PageNumber
 }
+
+// Render renders a Page into a PDF context.
+func (p *Page) Render(provider core.Provider, cell entity.Cell) {
+	prop := &properties.Rect{}
+	innerCell := cell.Copy()
+	prop.MakeValid()
+	if p.config.BackgroundImage != nil {
+		provider.AddBackgroundImageFromBytes(p.config.BackgroundImage.Bytes, &innerCell, prop, p.config.BackgroundImage.Extension)
+	}
+
+	for _, row := range p.rows {
+		row.Render(provider, innerCell)
+		innerCell.Y += row.GetHeight(provider, &innerCell)
+	}
+
+	if p.prop.Pattern != "" {
+		provider.AddText(p.prop.GetPageString(p.number, p.total), &cell, p.prop.GetNumberTextProp(cell.Height))
+	}
+}
+
+// SetConfig sets the Page configuration.
+func (p *Page) SetConfig(config *entity.Config) {
+	p.config = config
+	for _, row := range p.rows {
+		row.SetConfig(config)
+	}
+}
+
+// SetNumber sets the Page number and total.
+func (p *Page) SetNumber(number int, total int) {
+	p.number = number
+	p.total = total
+}
