@@ -16,6 +16,21 @@ type BytesImage struct {
 	config    *entity.Config
 }
 
+// NewFromBytes is responsible to create an instance of an Image.
+func NewFromBytes(bytes []byte, extension extension.Extension, ps ...properties.Rect) core.Component {
+	prop := properties.Rect{}
+	if len(ps) > 0 {
+		prop = ps[0]
+	}
+	prop.MakeValid()
+
+	return &BytesImage{
+		bytes:     bytes,
+		prop:      prop,
+		extension: extension,
+	}
+}
+
 // GetStructure returns the Structure of an Image.
 func (b *BytesImage) GetStructure() *node.Node[core.Structure] {
 	trimLength := 10
