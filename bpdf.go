@@ -1,6 +1,8 @@
 package bpdf
 
 import (
+	"errors"
+
 	"github.com/f-amaral/go-async/async"
 	"github.com/pchchv/bpdf/components/col"
 	"github.com/pchchv/bpdf/components/page"
@@ -10,6 +12,7 @@ import (
 	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/internal/cache"
 	"github.com/pchchv/bpdf/internal/providers/gofpdf"
+	"github.com/pchchv/bpdf/merge"
 	"github.com/pchchv/bpdf/node"
 )
 
@@ -153,6 +156,75 @@ func (m *Bpdf) setConfig() {
 		page.SetConfig(m.config)
 		page.SetNumber(i+1, len(m.pages))
 	}
+}
+
+func (m *Bpdf) generateLowMemory() (core.Document, error) {
+	chunks := len(m.pages) / m.config.ChunkWorkers
+	if chunks == 0 {
+		chunks = 1
+	}
+
+	pageGroups := make([][]core.Page, 0)
+	for i := 0; i < len(m.pages); i += chunks {
+		end := i + chunks
+		if end > len(m.pages) {
+			end = len(m.pages)
+		}
+
+		pageGroups = append(pageGroups, m.pages[i:end])
+	}
+
+	var pdfResults [][]byte
+	for _, pageGroup := range pageGroups {
+		bytes, err := m.processPage(pageGroup)
+		if err != nil {
+			return nil, errors.New("an error has occurred while trying to generate PDFs in low memory mode")
+		}
+
+		pdfResults = append(pdfResults, bytes)
+	}
+
+	mergedBytes, err := merge.Bytes(pdfResults...)
+	if err != nil {
+		return nil, err
+	}
+
+	return core.NewPDF(mergedBytes, nil), nil
+}
+
+func (m *Bpdf) generateConcurrently() (core.Document, error) {
+	chunks := len(m.pages) / m.config.ChunkWorkers
+	if chunks == 0 {
+		chunks = 1
+	}
+
+	pageGroups := make([][]core.Page, 0)
+	for i := 0; i < len(m.pages); i += chunks {
+		end := i + chunks
+		if end > len(m.pages) {
+			end = len(m.pages)
+		}
+
+		pageGroups = append(pageGroups, m.pages[i:end])
+	}
+
+	processed := m.pool.Process(pageGroups)
+	if processed.HasError {
+		return nil, errors.New("an error has occurred while trying to generate PDFs concurrently")
+	}
+
+	pdfs := make([][]byte, len(processed.Results))
+	for i, result := range processed.Results {
+		bytes := result.Output.([]byte)
+		pdfs[i] = bytes
+	}
+
+	mergedBytes, err := merge.Bytes(pdfs...)
+	if err != nil {
+		return nil, err
+	}
+
+	return core.NewPDF(mergedBytes, nil), nil
 }
 
 func getProvider(cache cache.Cache, cfg *entity.Config) core.Provider {
