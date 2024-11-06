@@ -68,3 +68,34 @@ func ExampleNewQrRow() {
 
 	// generate document
 }
+
+// ExampleNewMatrix demonstrates how to generate a matrixcode and add it to bpdf.
+func ExampleNewMatrix() {
+	m := bpdf.New()
+
+	matrixCode := code.NewMatrix("123456789", properties.Rect{Percent: 70.5})
+	col := col.New(6).Add(matrixCode)
+	m.AddRow(10, col)
+
+	// generate document
+}
+
+// ExampleNewMatrixCol demonstrates how to generate a column with a matrixcode and add it to bpdf.
+func ExampleNewMatrixCol() {
+	m := bpdf.New()
+
+	matrixCodeCol := code.NewMatrixCol(12, "123456789", properties.Rect{Percent: 70.5})
+	m.AddRow(10, matrixCodeCol)
+
+	// generate document
+}
+
+// ExampleNewMatrixRow demonstrates how to generate a row with a matrixcode and add it to bpdf.
+func ExampleNewMatrixRow() {
+	m := bpdf.New()
+
+	matrixCodeRow := code.NewMatrixRow(10, "123456789", properties.Rect{Percent: 70.5})
+	m.AddRows(matrixCodeRow)
+
+	// generate document
+}
