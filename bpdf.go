@@ -8,6 +8,7 @@ import (
 	"github.com/pchchv/bpdf/components/page"
 	"github.com/pchchv/bpdf/components/row"
 	"github.com/pchchv/bpdf/config"
+	"github.com/pchchv/bpdf/consts/generation"
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/internal/cache"
@@ -73,13 +74,43 @@ func (m *Bpdf) AddRows(rows ...core.Row) {
 	m.addRows(rows...)
 }
 
-// AddAutoRow is responsible for adding a line with automatic height to the
-// current document.
+// AddAutoRow is responsible for adding
+// a line with automatic height to the current document.
 // The row height will be calculated based on its content.
 func (m *Bpdf) AddAutoRow(cols ...core.Col) core.Row {
 	r := row.New().Add(cols...)
 	m.addRow(r)
 	return r
+}
+
+// AddPages is responsible for add pages directly in the document.
+// By adding a page directly, the current cursor will reset and the new page will appear as the next.
+// If the page provided have more rows than the maximum useful area of a page,
+// bpdf will split that page in more than one.
+func (m *Bpdf) AddPages(pages ...core.Page) {
+	for _, page := range pages {
+		if m.currentHeight != m.headerHeight {
+			m.fillPageToAddNew()
+			m.addHeader()
+		}
+		m.addRows(page.GetRows()...)
+	}
+}
+
+// Generate computes the component tree created by all
+// other bpdf methods and for generating the PDF document.
+func (m *Bpdf) Generate() (core.Document, error) {
+	m.fillPageToAddNew()
+	m.setConfig()
+	if m.config.GenerationMode == generation.Concurrent {
+		return m.generateConcurrently()
+	}
+
+	if m.config.GenerationMode == generation.SequentialLowMemory {
+		return m.generateLowMemory()
+	}
+
+	return m.generate()
 }
 
 func (m *Bpdf) processPage(pages []core.Page) ([]byte, error) {
