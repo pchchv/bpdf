@@ -113,6 +113,40 @@ func (m *Bpdf) Generate() (core.Document, error) {
 	return m.generate()
 }
 
+// RegisterFooter is responsible to define a set of rows as a footer of the document.
+// The footer will appear in every new page of the document.
+// The footer cannot occupy an area greater than the useful area of the page,
+// it this case the method will return an error.
+func (m *Bpdf) RegisterFooter(rows ...core.Row) error {
+	height := m.getRowsHeight(rows...)
+	if height > m.config.Dimensions.Height {
+		return errors.New("footer height is greater than page useful area")
+	}
+
+	m.footerHeight = height
+	m.footer = rows
+	return nil
+}
+
+// RegisterHeader is responsible to define a set of rows as a header of the document.
+// The header will appear in every new page of the document.
+// The header cannot occupy an area greater than the useful area of the page,
+// it this case the method will return an error.
+func (m *Bpdf) RegisterHeader(rows ...core.Row) error {
+	height := m.getRowsHeight(rows...)
+	if height+m.footerHeight > m.config.Dimensions.Height {
+		return errors.New("header height is greater than page useful area")
+	}
+
+	m.headerHeight = height
+	m.header = rows
+	for _, headerRow := range rows {
+		m.addRow(headerRow)
+	}
+
+	return nil
+}
+
 func (m *Bpdf) processPage(pages []core.Page) ([]byte, error) {
 	innerCtx := m.cell.Copy()
 	innerProvider := getProvider(cache.NewMutexDecorator(cache.New()), m.config)
