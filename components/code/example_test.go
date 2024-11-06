@@ -37,3 +37,34 @@ func ExampleNewBarRow() {
 
 	// generate document
 }
+
+// ExampleNewQr demonstrates how to generate a qrcode and add it to bpdf.
+func ExampleNewQr() {
+	m := bpdf.New()
+
+	qrCode := code.NewQr("123456789", properties.Rect{Percent: 70.5})
+	col := col.New(6).Add(qrCode)
+	m.AddRow(10, col)
+
+	// generate document
+}
+
+// ExampleNewQrCol demonstrates how to generate a column with a qrcode and add it to bpdf.
+func ExampleNewQrCol() {
+	m := bpdf.New()
+
+	qrCodeCol := code.NewQrCol(12, "123456789", properties.Rect{Percent: 70.5})
+	m.AddRow(10, qrCodeCol)
+
+	// generate document
+}
+
+// ExampleNewQrRow demonstrates how to generate a row with a qrcode and add it to bpdf.
+func ExampleNewQrRow() {
+	m := bpdf.New()
+
+	qrCodeRow := code.NewQrRow(10, "123456789", properties.Rect{Percent: 70.5})
+	m.AddRows(qrCodeRow)
+
+	// generate document
+}
