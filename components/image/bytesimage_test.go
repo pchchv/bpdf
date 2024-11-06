@@ -92,3 +92,30 @@ func TestBytesImage_GetHeight(t *testing.T) {
 		assert.Equal(t, height, cell.Width/2)
 	})
 }
+
+func TestBytesImage_SetConfig(t *testing.T) {
+	t.Run("should call correctly", func(t *testing.T) {
+		bytes := []byte{1, 2, 3}
+		ext := extension.Jpg
+		prop := fixture.RectProp()
+		sut := image.NewFromBytes(bytes, ext, prop)
+
+		sut.SetConfig(nil)
+	})
+}
+
+func TestBytesImage_Render(t *testing.T) {
+	t.Run("should call provider correctly", func(t *testing.T) {
+		bytes := []byte{1, 2, 3}
+		ext := extension.Jpg
+		cell := fixture.CellEntity()
+		prop := fixture.RectProp()
+		sut := image.NewFromBytes(bytes, ext, prop)
+		provider := mocks.NewProvider(t)
+		provider.EXPECT().AddImageFromBytes(bytes, &cell, &prop, ext)
+
+		sut.Render(provider, &cell)
+
+		provider.AssertNumberOfCalls(t, "AddImageFromBytes", 1)
+	})
+}
