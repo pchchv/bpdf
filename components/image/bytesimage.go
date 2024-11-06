@@ -2,6 +2,8 @@
 package image
 
 import (
+	"github.com/pchchv/bpdf/components/col"
+	"github.com/pchchv/bpdf/components/row"
 	"github.com/pchchv/bpdf/consts/extension"
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
@@ -29,6 +31,19 @@ func NewFromBytes(bytes []byte, extension extension.Extension, ps ...properties.
 		prop:      prop,
 		extension: extension,
 	}
+}
+
+// NewFromBytesCol is responsible to create an instance of an Image wrapped in a Col.
+func NewFromBytesCol(size int, bytes []byte, extension extension.Extension, ps ...properties.Rect) core.Col {
+	image := NewFromBytes(bytes, extension, ps...)
+	return col.New(size).Add(image)
+}
+
+// NewFromBytesRow is responsible to create an instance of an Image wrapped in a Row.
+func NewFromBytesRow(height float64, bytes []byte, extension extension.Extension, ps ...properties.Rect) core.Row {
+	image := NewFromBytes(bytes, extension, ps...)
+	c := col.New().Add(image)
+	return row.New(height).Add(c)
 }
 
 // GetStructure returns the Structure of an Image.
