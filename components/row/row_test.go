@@ -3,10 +3,10 @@ package row_test
 import (
 	"testing"
 
+	"github.com/pchchv/bpdf/components/col"
+	"github.com/pchchv/bpdf/components/row"
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
-	"github.com/pchchv/bpdf/internal/components/col"
-	"github.com/pchchv/bpdf/internal/components/row"
 	"github.com/pchchv/bpdf/internal/fixture"
 	"github.com/pchchv/bpdf/mocks"
 	"github.com/pchchv/bpdf/test"
