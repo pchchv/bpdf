@@ -147,6 +147,13 @@ func (m *Bpdf) RegisterHeader(rows ...core.Row) error {
 	return nil
 }
 
+// FitlnCurrentPage is responsible to
+// validating whether a line fits on the current page.
+func (m *Bpdf) FitlnCurrentPage(heightNewLine float64) bool {
+	contentSize := m.getRowsHeight(m.rows...) + m.footerHeight + m.headerHeight
+	return contentSize+heightNewLine < m.config.Dimensions.Height
+}
+
 func (m *Bpdf) processPage(pages []core.Page) ([]byte, error) {
 	innerCtx := m.cell.Copy()
 	innerProvider := getProvider(cache.NewMutexDecorator(cache.New()), m.config)
