@@ -227,6 +227,29 @@ func (m *Bpdf) generateConcurrently() (core.Document, error) {
 	return core.NewPDF(mergedBytes, nil), nil
 }
 
+func (m *Bpdf) generate() (core.Document, error) {
+	innerCtx := m.cell.Copy()
+	for _, page := range m.pages {
+		page.Render(m.provider, innerCtx)
+	}
+
+	documentBytes, err := m.provider.GenerateBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	return core.NewPDF(documentBytes, nil), nil
+}
+
+func (m *Bpdf) getRowsHeight(rows ...core.Row) (height float64) {
+	for _, r := range rows {
+		r.SetConfig(m.config)
+		height += r.GetHeight(m.provider, &m.cell)
+	}
+
+	return
+}
+
 func getProvider(cache cache.Cache, cfg *entity.Config) core.Provider {
 	deps := gofpdf.NewBuilder().Build(cfg, cache)
 	provider := gofpdf.New(deps)
