@@ -40,7 +40,7 @@ func (m *Bpdf) GetCurrentConfig() *entity.Config {
 func (m *Bpdf) GetStructure() *node.Node[core.Structure] {
 	m.fillPageToAddNew()
 	node := node.New(core.Structure{
-		Type:    "maroto",
+		Type:    "bpdf",
 		Details: m.config.ToMap(),
 	})
 	for _, p := range m.pages {
@@ -48,6 +48,35 @@ func (m *Bpdf) GetStructure() *node.Node[core.Structure] {
 		node.AddNext(inner)
 	}
 	return node
+}
+
+// AddRow is responsible for add one row in the current document.
+// By adding a row, if the row will extrapolate the useful area of a page,
+// bpdf will automatically add a new page. bpdf use the information of
+// PageSize, PageMargin, FooterSize and HeaderSize to calculate the useful
+// area of a page.
+func (m *Bpdf) AddRow(rowHeight float64, cols ...core.Col) core.Row {
+	r := row.New(rowHeight).Add(cols...)
+	m.addRow(r)
+	return r
+}
+
+// AddRows is responsible for add rows in the current document.
+// By adding a row, if the row will extrapolate the useful area of a page,
+// bpdf will automatically add a new page.
+// bpdf use the information of PageSize, PageMargin, FooterSize and HeaderSize
+// to calculate the useful area of a page.
+func (m *Bpdf) AddRows(rows ...core.Row) {
+	m.addRows(rows...)
+}
+
+// AddAutoRow is responsible for adding a line with automatic height to the
+// current document.
+// The row height will be calculated based on its content.
+func (m *Bpdf) AddAutoRow(cols ...core.Col) core.Row {
+	r := row.New().Add(cols...)
+	m.addRow(r)
+	return r
 }
 
 func (m *Bpdf) processPage(pages []core.Page) ([]byte, error) {
