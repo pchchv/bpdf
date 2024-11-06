@@ -48,3 +48,34 @@ func ExampleNewFromBytesRow() {
 
 	// generate document
 }
+
+// ExampleNewFromFile demonstrates how to create an image component reading file.
+func ExampleNewFromFile() {
+	m := bpdf.New()
+
+	image := image.NewFromFile("image.png")
+	col := col.New(12).Add(image)
+	m.AddRow(10, col)
+
+	// generate document
+}
+
+// ExampleNewFromFileCol demonstrates how to create an image component wrapped into a column reading file.
+func ExampleNewFromFileCol() {
+	m := bpdf.New()
+
+	imageCol := image.NewFromFileCol(12, "image.png")
+	m.AddRow(10, imageCol)
+
+	// generate document
+}
+
+// ExampleNewFromFileRow demonstrates how to create an image component wrapped into a row reading file.
+func ExampleNewFromFileRow() {
+	m := bpdf.New()
+
+	imageRow := image.NewFromFileRow(10, "image.png")
+	m.AddRows(imageRow)
+
+	// generate document
+}
