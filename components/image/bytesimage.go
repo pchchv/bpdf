@@ -46,3 +46,13 @@ func (b *BytesImage) GetHeight(provider core.Provider, cell *entity.Cell) float6
 	width := (b.prop.Percent / 100) * cell.Width
 	return proportion * width
 }
+
+// SetConfig sets the pdf config.
+func (b *BytesImage) SetConfig(config *entity.Config) {
+	b.config = config
+}
+
+// Render renders an Image into a PDF context.
+func (b *BytesImage) Render(provider core.Provider, cell *entity.Cell) {
+	provider.AddImageFromBytes(b.bytes, cell, &b.prop, b.extension)
+}
