@@ -5,6 +5,7 @@ import (
 
 	"github.com/pchchv/bpdf/components/image"
 	"github.com/pchchv/bpdf/internal/fixture"
+	"github.com/pchchv/bpdf/mocks"
 	"github.com/pchchv/bpdf/test"
 )
 
@@ -61,5 +62,30 @@ func TestNewAutoFromFileRow(t *testing.T) {
 		sut := image.NewAutoFromFileRow("path", fixture.RectProp())
 
 		test.New(t).Assert(sut.GetStructure()).Equals("components/images/new_image_from_file_auto_row_custom_prop.json")
+	})
+}
+
+func TestFileImage_Render(t *testing.T) {
+	t.Run("should call provider correctly", func(t *testing.T) {
+		path := "path"
+		cell := fixture.CellEntity()
+		prop := fixture.RectProp()
+		sut := image.NewFromFile(path, prop)
+		provider := mocks.NewProvider(t)
+		provider.EXPECT().AddImageFromFile(path, &cell, &prop)
+
+		sut.Render(provider, &cell)
+
+		provider.AssertNumberOfCalls(t, "AddImageFromFile", 1)
+	})
+}
+
+func TestFileImageSetConfig(t *testing.T) {
+	t.Run("should call correctly", func(t *testing.T) {
+		path := "path"
+		prop := fixture.RectProp()
+		sut := image.NewFromFile(path, prop)
+
+		sut.SetConfig(nil)
 	})
 }
