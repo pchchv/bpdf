@@ -1,12 +1,15 @@
 package image_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/pchchv/bpdf/components/image"
+	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/internal/fixture"
 	"github.com/pchchv/bpdf/mocks"
 	"github.com/pchchv/bpdf/test"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewFromFile(t *testing.T) {
@@ -87,5 +90,27 @@ func TestFileImageSetConfig(t *testing.T) {
 		sut := image.NewFromFile(path, prop)
 
 		sut.SetConfig(nil)
+	})
+}
+
+func TestFileImage_GetHeight(t *testing.T) {
+	t.Run("When it is not possible to know the dimensions of the file image, should return height 0", func(t *testing.T) {
+		cell := fixture.CellEntity()
+		provider := mocks.NewProvider(t)
+		provider.EXPECT().GetDimensionsByImage("path").Return(nil, errors.New("anyError2"))
+		sut := image.NewFromFile("path")
+
+		height := sut.GetHeight(provider, &cell)
+		assert.Equal(t, height, 0.0)
+	})
+
+	t.Run("When the height of the file image is half the width, should return half the width of the cell", func(t *testing.T) {
+		cell := fixture.CellEntity()
+		provider := mocks.NewProvider(t)
+		provider.EXPECT().GetDimensionsByImage("path").Return(&entity.Dimensions{Width: 10, Height: 5}, nil)
+		sut := image.NewFromFile("path")
+
+		height := sut.GetHeight(provider, &cell)
+		assert.Equal(t, height, cell.Width/2)
 	})
 }
