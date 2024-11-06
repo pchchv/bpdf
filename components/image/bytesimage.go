@@ -46,6 +46,13 @@ func NewFromBytesRow(height float64, bytes []byte, extension extension.Extension
 	return row.New(height).Add(c)
 }
 
+// NewAutoFromBytesRow is responsible to create an instance of an Image wrapped in a automatic row.
+func NewAutoFromBytesRow(bytes []byte, extension extension.Extension, ps ...properties.Rect) core.Row {
+	image := NewFromBytes(bytes, extension, ps...)
+	c := col.New().Add(image)
+	return row.New().Add(c)
+}
+
 // GetStructure returns the Structure of an Image.
 func (b *BytesImage) GetStructure() *node.Node[core.Structure] {
 	trimLength := 10
