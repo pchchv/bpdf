@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/f-amaral/go-async/async"
+	"github.com/f-amaral/go-async/pool"
 	"github.com/pchchv/bpdf/components/col"
 	"github.com/pchchv/bpdf/components/page"
 	"github.com/pchchv/bpdf/components/row"
@@ -32,6 +33,34 @@ type Bpdf struct {
 	currentHeight float64
 	// Processing
 	pool async.Processor[[]core.Page, []byte]
+}
+
+// New is responsible for create a new instance of core.BPDF.
+// It's optional to provide an *entity.Config with customizations
+// those customization are created by using the config.Builder.
+func New(cfgs ...*entity.Config) core.BPDF {
+	cache := cache.New()
+	cfg := getConfig(cfgs...)
+	provider := getProvider(cache, cfg)
+	m := &Bpdf{
+		provider: provider,
+		cell: entity.NewRootCell(cfg.Dimensions.Width, cfg.Dimensions.Height, entity.Margins{
+			Left:   cfg.Margins.Left,
+			Top:    cfg.Margins.Top,
+			Right:  cfg.Margins.Right,
+			Bottom: cfg.Margins.Bottom,
+		}),
+		cache:  cache,
+		config: cfg,
+	}
+
+	if cfg.GenerationMode == generation.Concurrent {
+		p := pool.NewPool[[]core.Page, []byte](cfg.ChunkWorkers, m.processPage,
+			pool.WithSortingOutput[[]core.Page, []byte]())
+		m.pool = p
+	}
+
+	return m
 }
 
 // GetCurrentConfig is responsible for returning the current settings from the file.
