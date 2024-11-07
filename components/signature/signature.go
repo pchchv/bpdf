@@ -2,6 +2,8 @@
 package signature
 
 import (
+	"github.com/pchchv/bpdf/components/col"
+	"github.com/pchchv/bpdf/components/row"
 	"github.com/pchchv/bpdf/consts/align"
 	"github.com/pchchv/bpdf/consts/fontfamily"
 	"github.com/pchchv/bpdf/core"
@@ -41,6 +43,13 @@ func NewRow(height float64, value string, ps ...properties.Signature) core.Row {
 	signature := New(value, ps...)
 	c := col.New().Add(signature)
 	return row.New(height).Add(c)
+}
+
+// NewAutoRow is responsible to create an instance of a Signature wrapped in a automatic Row.
+func NewAutoRow(value string, ps ...properties.Signature) core.Row {
+	signature := New(value, ps...)
+	c := col.New().Add(signature)
+	return row.New().Add(c)
 }
 
 // GetStructure returns the Structure of a Signature.
