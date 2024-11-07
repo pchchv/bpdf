@@ -5,9 +5,11 @@ import (
 	"testing"
 
 	"github.com/pchchv/bpdf"
+	"github.com/pchchv/bpdf/components/code"
 	"github.com/pchchv/bpdf/components/col"
 	"github.com/pchchv/bpdf/components/page"
 	"github.com/pchchv/bpdf/components/row"
+	"github.com/pchchv/bpdf/components/text"
 	"github.com/pchchv/bpdf/config"
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/test"
@@ -263,5 +265,55 @@ func TestBPDF_GetCurrentConfig(t *testing.T) {
 			Build())
 
 		assert.Equal(t, sut.GetCurrentConfig().MaxGridSize, 20)
+	})
+}
+
+// nolint:dupl
+func TestBPDF_RegisterFooter(t *testing.T) {
+	t.Run("when footer size is greater than useful area, should return error", func(t *testing.T) {
+		sut := bpdf.New()
+		err := sut.RegisterFooter(row.New(1000))
+		assert.NotNil(t, err)
+		assert.Equal(t, "footer height is greater than page useful area", err.Error())
+	})
+
+	t.Run("when header size is correct, should not return error and apply header", func(t *testing.T) {
+		var rows []core.Row
+		sut := bpdf.New()
+		err := sut.RegisterFooter(code.NewBarRow(10, "footer"))
+		for i := 0; i < 5; i++ {
+			rows = append(rows, row.New(100).Add(col.New(12)))
+		}
+
+		sut.AddRows(rows...)
+
+		assert.Nil(t, err)
+		test.New(t).Assert(sut.GetStructure()).Equals("footer.json")
+	})
+
+	t.Run("when autoRow is sent, should set autoRow", func(t *testing.T) {
+		var rows []core.Row
+		sut := bpdf.New()
+		err := sut.RegisterFooter(text.NewAutoRow("header"))
+		for i := 0; i < 5; i++ {
+			rows = append(rows, row.New(100).Add(col.New(12)))
+		}
+
+		sut.AddRows(rows...)
+
+		assert.Nil(t, err)
+		test.New(t).Assert(sut.GetStructure()).Equals("footer_auto_row.json")
+	})
+}
+
+func TestBPDF_AddAutoRow(t *testing.T) {
+	t.Run("When 100 automatic rows are sent, it should create 2 pages", func(t *testing.T) {
+		sut := bpdf.New()
+
+		for i := 0; i < 150; i++ {
+			sut.AddAutoRow(text.NewCol(12, "teste"))
+		}
+
+		test.New(t).Assert(sut.GetStructure()).Equals("bpdf_add_auto_row_1.json")
 	})
 }
