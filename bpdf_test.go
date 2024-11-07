@@ -255,3 +255,13 @@ func TestBPDF_Generate(t *testing.T) {
 		test.New(t).Assert(sut.GetStructure()).Equals("bpdf_page_number.json")
 	})
 }
+
+func TestBPDF_GetCurrentConfig(t *testing.T) {
+	t.Run("When GetCurrentConfig is called then current settings are returned", func(t *testing.T) {
+		sut := bpdf.New(config.NewBuilder().
+			WithMaxGridSize(20).
+			Build())
+
+		assert.Equal(t, sut.GetCurrentConfig().MaxGridSize, 20)
+	})
+}
