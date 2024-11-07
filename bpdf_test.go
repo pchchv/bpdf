@@ -138,3 +138,120 @@ func TestBPDF_AddPages(t *testing.T) {
 		test.New(t).Assert(sut.GetStructure()).Equals("bpdf_add_pages_3.json")
 	})
 }
+
+func TestBPDF_Generate(t *testing.T) {
+	t.Run("add one row", func(t *testing.T) {
+		sut := bpdf.New()
+
+		sut.AddRow(10, col.New(12))
+
+		doc, err := sut.Generate()
+		assert.Nil(t, err)
+		assert.NotNil(t, doc)
+	})
+
+	t.Run("add two rows", func(t *testing.T) {
+		sut := bpdf.New()
+
+		sut.AddRow(10, col.New(12))
+		sut.AddRow(10, col.New(12))
+
+		doc, err := sut.Generate()
+		assert.Nil(t, err)
+		assert.NotNil(t, doc)
+	})
+
+	t.Run("add rows until add new page", func(t *testing.T) {
+		sut := bpdf.New()
+
+		for i := 0; i < 30; i++ {
+			sut.AddRow(10, col.New(12))
+		}
+
+		doc, err := sut.Generate()
+		assert.Nil(t, err)
+		assert.NotNil(t, doc)
+	})
+
+	t.Run("add rows until add new page, execute in parallel", func(t *testing.T) {
+		cfg := config.NewBuilder().
+			WithConcurrentMode(7).
+			Build()
+		sut := bpdf.New(cfg)
+
+		for i := 0; i < 30; i++ {
+			sut.AddRow(10, col.New(12))
+		}
+
+		doc, err := sut.Generate()
+		assert.Nil(t, err)
+		assert.NotNil(t, doc)
+	})
+
+	t.Run("add rows until add new page, execute in low memory mode", func(t *testing.T) {
+		cfg := config.NewBuilder().
+			WithSequentialLowMemoryMode(10).
+			Build()
+		sut := bpdf.New(cfg)
+
+		for i := 0; i < 30; i++ {
+			sut.AddRow(10, col.New(12))
+		}
+
+		doc, err := sut.Generate()
+		assert.Nil(t, err)
+		assert.NotNil(t, doc)
+	})
+
+	t.Run("sequential generation", func(t *testing.T) {
+		cfg := config.NewBuilder().
+			WithSequentialMode().
+			Build()
+		sut := bpdf.New(cfg)
+
+		for i := 0; i < 30; i++ {
+			sut.AddRow(10, col.New(12))
+		}
+
+		test.New(t).Assert(sut.GetStructure()).Equals("bpdf_sequential.json")
+	})
+
+	t.Run("sequential low memory generation", func(t *testing.T) {
+		cfg := config.NewBuilder().
+			WithSequentialLowMemoryMode(10).
+			Build()
+		sut := bpdf.New(cfg)
+
+		for i := 0; i < 30; i++ {
+			sut.AddRow(10, col.New(12))
+		}
+
+		test.New(t).Assert(sut.GetStructure()).Equals("bpdf_sequential_low_memory.json")
+	})
+
+	t.Run("sequential low memory generation", func(t *testing.T) {
+		cfg := config.NewBuilder().
+			WithConcurrentMode(10).
+			Build()
+		sut := bpdf.New(cfg)
+
+		for i := 0; i < 30; i++ {
+			sut.AddRow(10, col.New(12))
+		}
+
+		test.New(t).Assert(sut.GetStructure()).Equals("bpdf_concurrent.json")
+	})
+
+	t.Run("page number", func(t *testing.T) {
+		cfg := config.NewBuilder().
+			WithPageNumber().
+			Build()
+		sut := bpdf.New(cfg)
+
+		for i := 0; i < 30; i++ {
+			sut.AddRow(10, col.New(12))
+		}
+
+		test.New(t).Assert(sut.GetStructure()).Equals("bpdf_page_number.json")
+	})
+}
