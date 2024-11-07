@@ -9,6 +9,7 @@ import (
 	"github.com/pchchv/bpdf/properties"
 	"github.com/pchchv/bpdf/test"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestNew(t *testing.T) {
@@ -84,5 +85,33 @@ func TestSignature_GetHeight(t *testing.T) {
 
 		height := sut.GetHeight(provider, &cell)
 		assert.Equal(t, 7.0, height)
+	})
+}
+
+func TestSignature_Render(t *testing.T) {
+	t.Run("should call provider correctly", func(t *testing.T) {
+		label := "signature"
+		cell := fixture.CellEntity()
+		prop := fixture.SignatureProp()
+		sut := signature.New(label, prop)
+		provider := mocks.NewProvider(t)
+		provider.On("AddText", mock.Anything, mock.Anything, mock.Anything).Return(10.0)
+		provider.On("GetFontHeight", mock.Anything).Return(10.0)
+		provider.On("AddLine", mock.Anything, mock.Anything)
+
+		sut.Render(provider, &cell)
+
+		provider.AssertNumberOfCalls(t, "AddText", 1)
+		provider.AssertNumberOfCalls(t, "GetFontHeight", 1)
+		provider.AssertNumberOfCalls(t, "AddLine", 1)
+	})
+}
+
+func TestSignature_SetConfig(t *testing.T) {
+	t.Run("should call correctly", func(t *testing.T) {
+		prop := fixture.SignatureProp()
+		sut := signature.New("signature", prop)
+
+		sut.SetConfig(nil)
 	})
 }
