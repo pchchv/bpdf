@@ -14,6 +14,19 @@ type Text struct {
 	config *entity.Config
 }
 
+// New is responsible to create an instance of a Text.
+func New(value string, ps ...properties.Text) core.Component {
+	textProp := properties.Text{}
+	if len(ps) > 0 {
+		textProp = ps[0]
+	}
+
+	return &Text{
+		value: value,
+		prop:  textProp,
+	}
+}
+
 // GetHeight returns the height that the text will have in the PDF.
 func (t *Text) GetHeight(provider core.Provider, cell *entity.Cell) float64 {
 	amountLines := provider.GetLinesQuantity(t.value, &t.prop, cell.Width-t.prop.Left-t.prop.Right)
