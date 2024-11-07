@@ -42,6 +42,13 @@ func NewRow(height float64, value string, ps ...properties.Text) core.Row {
 	return row.New(height).Add(c)
 }
 
+// NewAutoRow is responsible for creating an instance of Text grouped in a Line with automatic height.
+func NewAutoRow(value string, ps ...properties.Text) core.Row {
+	r := New(value, ps...)
+	c := col.New().Add(r)
+	return row.New().Add(c)
+}
+
 // GetHeight returns the height that the text will have in the PDF.
 func (t *Text) GetHeight(provider core.Provider, cell *entity.Cell) float64 {
 	amountLines := provider.GetLinesQuantity(t.value, &t.prop, cell.Width-t.prop.Left-t.prop.Right)
