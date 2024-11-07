@@ -5,7 +5,10 @@ import (
 
 	"github.com/pchchv/bpdf/components/signature"
 	"github.com/pchchv/bpdf/internal/fixture"
+	"github.com/pchchv/bpdf/mocks"
+	"github.com/pchchv/bpdf/properties"
 	"github.com/pchchv/bpdf/test"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNew(t *testing.T) {
@@ -61,5 +64,25 @@ func TestNewAutoRow(t *testing.T) {
 		sut := signature.NewAutoRow("signature", fixture.SignatureProp())
 
 		test.New(t).Assert(sut.GetStructure()).Equals("components/signatures/new_signature_auto_row_custom_prop.json")
+	})
+}
+
+func TestSignature_GetHeight(t *testing.T) {
+	t.Run("When signature has a height of 10, should return 10", func(t *testing.T) {
+		cell := fixture.CellEntity()
+		font := fixture.FontProp()
+		sut := signature.New("signature",
+			properties.Signature{
+				SafePadding: 1,
+				FontFamily:  font.Family,
+				FontStyle:   font.Style,
+				FontSize:    font.Size, FontColor: font.Color,
+				LineThickness: 2,
+			})
+		provider := mocks.NewProvider(t)
+		provider.EXPECT().GetFontHeight(&font).Return(5.0)
+
+		height := sut.GetHeight(provider, &cell)
+		assert.Equal(t, 7.0, height)
 	})
 }
