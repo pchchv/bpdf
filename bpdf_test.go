@@ -406,3 +406,41 @@ func TestBPDF_FitlnCurrentPage(t *testing.T) {
 			assert.True(t, sut.FitlnCurrentPage(40))
 		})
 }
+
+// nolint:dupl
+func TestBPDF_RegisterHeader(t *testing.T) {
+	t.Run("when header size is greater than useful area, should return error", func(t *testing.T) {
+		sut := bpdf.New()
+		err := sut.RegisterHeader(row.New(1000))
+		assert.NotNil(t, err)
+		assert.Equal(t, "header height is greater than page useful area", err.Error())
+	})
+
+	t.Run("when header size is correct, should not return error and apply header", func(t *testing.T) {
+		var rows []core.Row
+		sut := bpdf.New()
+		err := sut.RegisterHeader(code.NewBarRow(10, "header"))
+		for i := 0; i < 5; i++ {
+			rows = append(rows, row.New(100).Add(col.New(12)))
+		}
+
+		sut.AddRows(rows...)
+
+		assert.Nil(t, err)
+		test.New(t).Assert(sut.GetStructure()).Equals("header.json")
+	})
+
+	t.Run("when autoRow is sent, should set autoRow", func(t *testing.T) {
+		var rows []core.Row
+		sut := bpdf.New()
+		err := sut.RegisterHeader(text.NewAutoRow("header"))
+		for i := 0; i < 5; i++ {
+			rows = append(rows, row.New(100).Add(col.New(12)))
+		}
+
+		sut.AddRows(rows...)
+
+		assert.Nil(t, err)
+		test.New(t).Assert(sut.GetStructure()).Equals("header_auto_row.json")
+	})
+}
