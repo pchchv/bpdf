@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/pchchv/bpdf/components/text"
+	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/internal/fixture"
 	"github.com/pchchv/bpdf/mocks"
 	"github.com/pchchv/bpdf/properties"
@@ -108,5 +109,33 @@ func TestText_GetHeight(t *testing.T) {
 
 		height := sut.GetHeight(provider, &cell)
 		assert.Equal(t, 10.0, height)
+	})
+}
+
+func TestText_Render(t *testing.T) {
+	t.Run("should call provider correctly", func(t *testing.T) {
+		value := "textValue"
+		cell := fixture.CellEntity()
+		prop := fixture.TextProp()
+		sut := text.New(value, prop)
+		provider := mocks.NewProvider(t)
+		provider.EXPECT().AddText(value, &cell, &prop)
+		sut.SetConfig(&entity.Config{})
+
+		sut.Render(provider, &cell)
+
+		provider.AssertNumberOfCalls(t, "AddText", 1)
+	})
+}
+
+func TestText_SetConfig(t *testing.T) {
+	t.Run("should call correctly", func(t *testing.T) {
+		sut := text.New("textValue")
+		fontProp := fixture.FontProp()
+		cfg := &entity.Config{
+			DefaultFont: &fontProp,
+		}
+
+		sut.SetConfig(cfg)
 	})
 }
