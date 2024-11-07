@@ -2,6 +2,8 @@
 package text
 
 import (
+	"github.com/pchchv/bpdf/components/col"
+	"github.com/pchchv/bpdf/components/row"
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/node"
@@ -25,6 +27,19 @@ func New(value string, ps ...properties.Text) core.Component {
 		value: value,
 		prop:  textProp,
 	}
+}
+
+// NewCol is responsible to create an instance of a Text wrapped in a Col.
+func NewCol(size int, value string, ps ...properties.Text) core.Col {
+	text := New(value, ps...)
+	return col.New(size).Add(text)
+}
+
+// NewRow is responsible to create an instance of a Text wrapped in a Row.
+func NewRow(height float64, value string, ps ...properties.Text) core.Row {
+	r := New(value, ps...)
+	c := col.New().Add(r)
+	return row.New(height).Add(c)
 }
 
 // GetHeight returns the height that the text will have in the PDF.
