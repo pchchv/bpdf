@@ -30,6 +30,19 @@ func New(value string, ps ...properties.Signature) core.Component {
 	}
 }
 
+// NewCol is responsible to create an instance of a Signature wrapped in a Col.
+func NewCol(size int, value string, ps ...properties.Signature) core.Col {
+	signature := New(value, ps...)
+	return col.New(size).Add(signature)
+}
+
+// NewRow is responsible to create an instance of a Signature wrapped in a Row.
+func NewRow(height float64, value string, ps ...properties.Signature) core.Row {
+	signature := New(value, ps...)
+	c := col.New().Add(signature)
+	return row.New(height).Add(c)
+}
+
 // GetStructure returns the Structure of a Signature.
 func (s *Signature) GetStructure() *node.Node[core.Structure] {
 	str := core.Structure{
