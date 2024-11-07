@@ -317,3 +317,92 @@ func TestBPDF_AddAutoRow(t *testing.T) {
 		test.New(t).Assert(sut.GetStructure()).Equals("bpdf_add_auto_row_1.json")
 	})
 }
+
+func TestBPDF_AddRows(t *testing.T) {
+	t.Run("when col is not sent, should empty col is set", func(t *testing.T) {
+		sut := bpdf.New()
+
+		sut.AddRows(row.New(15))
+
+		test.New(t).Assert(sut.GetStructure()).Equals("bpdf_add_rows_4.json")
+	})
+
+	t.Run("add one row", func(t *testing.T) {
+		sut := bpdf.New()
+
+		sut.AddRows(row.New(15).Add(col.New(12)))
+
+		test.New(t).Assert(sut.GetStructure()).Equals("bpdf_add_rows_1.json")
+	})
+
+	t.Run("add two rows", func(t *testing.T) {
+		sut := bpdf.New()
+
+		sut.AddRows(row.New(15).Add(col.New(12)))
+		sut.AddRows(row.New(15).Add(col.New(12)))
+
+		test.New(t).Assert(sut.GetStructure()).Equals("bpdf_add_rows_2.json")
+	})
+
+	t.Run("add rows until add new page", func(t *testing.T) {
+		sut := bpdf.New()
+
+		for i := 0; i < 20; i++ {
+			sut.AddRows(row.New(15).Add(col.New(12)))
+		}
+
+		test.New(t).Assert(sut.GetStructure()).Equals("bpdf_add_rows_3.json")
+	})
+
+	t.Run("when autoRow is sent, should set autoRow", func(t *testing.T) {
+		sut := bpdf.New()
+
+		for i := 0; i < 20; i++ {
+			sut.AddRows(row.New().Add(text.NewCol(12, "teste")))
+		}
+
+		test.New(t).Assert(sut.GetStructure()).Equals("bpdf_add_rows_5.json")
+	})
+}
+
+func TestBPDF_FitlnCurrentPage(t *testing.T) {
+	t.Run("when component is smaller should available size, then false", func(t *testing.T) {
+		var rows []core.Row
+		sut := bpdf.New(config.NewBuilder().
+			WithDimensions(210.0, 297.0).
+			Build())
+		for i := 0; i < 26; i++ {
+			rows = append(rows, row.New(10).Add(col.New(12)))
+		}
+
+		sut.AddPages(page.New().Add(rows...))
+		assert.False(t, sut.FitlnCurrentPage(40))
+	})
+
+	t.Run("when component is larger should the available size, then true", func(t *testing.T) {
+		var rows []core.Row
+		sut := bpdf.New(config.NewBuilder().
+			WithDimensions(210.0, 297.0).
+			Build())
+		for i := 0; i < 10; i++ {
+			rows = append(rows, row.New(10).Add(col.New(12)))
+		}
+
+		sut.AddPages(page.New().Add(rows...))
+		assert.True(t, sut.FitlnCurrentPage(40))
+	})
+
+	t.Run("when it have content with an automatic height of 10 and the height sent fits the current page, it should return true",
+		func(t *testing.T) {
+			var rows []core.Row
+			sut := bpdf.New(config.NewBuilder().
+				WithDimensions(210.0, 297.0).
+				Build())
+			for i := 0; i < 10; i++ {
+				rows = append(rows, row.New().Add(text.NewCol(12, "teste")))
+			}
+
+			sut.AddPages(page.New().Add(rows...))
+			assert.True(t, sut.FitlnCurrentPage(40))
+		})
+}
