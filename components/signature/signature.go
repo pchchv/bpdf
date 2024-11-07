@@ -2,6 +2,8 @@
 package signature
 
 import (
+	"github.com/pchchv/bpdf/consts/align"
+	"github.com/pchchv/bpdf/consts/fontfamily"
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/node"
@@ -12,6 +14,20 @@ type Signature struct {
 	value  string
 	prop   properties.Signature
 	config *entity.Config
+}
+
+// New is responsible to create an instance of a Signature.
+func New(value string, ps ...properties.Signature) core.Component {
+	prop := properties.Signature{}
+	if len(ps) > 0 {
+		prop = ps[0]
+	}
+	prop.MakeValid(fontfamily.Arial)
+
+	return &Signature{
+		value: value,
+		prop:  prop,
+	}
 }
 
 // GetStructure returns the Structure of a Signature.
