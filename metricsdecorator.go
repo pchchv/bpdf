@@ -52,6 +52,24 @@ func (m *MetricsDecorator) Generate() (doc core.Document, err error) {
 	return core.NewPDF(bytes, report), nil
 }
 
+// RegisterHeader decorates the RegisterHeader method of bpdf instance.
+func (m *MetricsDecorator) RegisterHeader(rows ...core.Row) (err error) {
+	timeSpent := time.GetTimeSpent(func() {
+		err = m.inner.RegisterHeader(rows...)
+	})
+	m.headerTime = timeSpent
+	return
+}
+
+// RegisterFooter decorates the RegisterFooter method of bpdf instance.
+func (m *MetricsDecorator) RegisterFooter(rows ...core.Row) (err error) {
+	timeSpent := time.GetTimeSpent(func() {
+		err = m.inner.RegisterFooter(rows...)
+	})
+	m.footerTime = timeSpent
+	return
+}
+
 func (m *MetricsDecorator) getAVG(times []*metrics.Time) *metrics.Time {
 	var sum float64
 	for _, time := range times {
