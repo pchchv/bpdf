@@ -20,7 +20,7 @@ type MetricsDecorator struct {
 	inner          core.BPDF
 }
 
-// GetStructure decorates the GetStructure method of maroto instance.
+// GetStructure decorates the GetStructure method of bpdf instance.
 func (m *MetricsDecorator) GetStructure() *node.Node[core.Structure] {
 	var tree *node.Node[core.Structure]
 	timeSpent := time.GetTimeSpent(func() {
@@ -31,9 +31,25 @@ func (m *MetricsDecorator) GetStructure() *node.Node[core.Structure] {
 	return tree
 }
 
-// GetCurrentConfig decorates the GetCurrentConfig method of maroto instance.
+// GetCurrentConfig decorates the GetCurrentConfig method of bpdf instance.
 func (m *MetricsDecorator) GetCurrentConfig() *entity.Config {
 	return m.inner.GetCurrentConfig()
+}
+
+// Generate decorates the Generate method of bpdf instance.
+func (m *MetricsDecorator) Generate() (doc core.Document, err error) {
+	timeSpent := time.GetTimeSpent(func() {
+		doc, err = m.inner.Generate()
+	})
+	m.generateTime = timeSpent
+	if err != nil {
+		return nil, err
+	}
+
+	bytes := doc.GetBytes()
+	report := m.buildMetrics(len(bytes)).Normalize()
+
+	return core.NewPDF(bytes, report), nil
 }
 
 func (m *MetricsDecorator) getAVG(times []*metrics.Time) *metrics.Time {
