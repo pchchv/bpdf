@@ -101,6 +101,20 @@ func (m *MetricsDecorator) AddAutoRow(cols ...core.Col) core.Row {
 	return r
 }
 
+// AddPages decorates the AddPages method of bpdf instance.
+func (m *MetricsDecorator) AddPages(pages ...core.Page) {
+	timeSpent := time.GetTimeSpent(func() {
+		m.inner.AddPages(pages...)
+	})
+
+	m.addPageTime = append(m.addPageTime, timeSpent)
+}
+
+// FitlnCurrentPage decoratess the FitlnCurrentPage method of bpdf instance.
+func (m *MetricsDecorator) FitlnCurrentPage(heightNewLine float64) bool {
+	return m.inner.FitlnCurrentPage(heightNewLine)
+}
+
 func (m *MetricsDecorator) getAVG(times []*metrics.Time) *metrics.Time {
 	var sum float64
 	for _, time := range times {
