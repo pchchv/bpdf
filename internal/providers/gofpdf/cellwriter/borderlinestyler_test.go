@@ -12,13 +12,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// import (
-// 	"github.com/johnfercher/maroto/v2/mocks"
-// 	"github.com/johnfercher/maroto/v2/pkg/consts/linestyle"
-// 	"github.com/johnfercher/maroto/v2/pkg/core/entity"
-// 	"github.com/johnfercher/maroto/v2/pkg/props"
-// )
-
 func TestNewBorderLineStyler(t *testing.T) {
 	sut := cellwriter.NewBorderLineStyler(nil)
 

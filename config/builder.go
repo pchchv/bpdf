@@ -256,14 +256,14 @@ func (b *CfgBuilder) WithConcurrentMode(chunkWorkers int) Builder {
 	return b
 }
 
-// WithSequentialMode defines that maroto will run in default mode.
+// WithSequentialMode defines that bpdf will run in default mode.
 func (b *CfgBuilder) WithSequentialMode() Builder {
 	b.chunkWorkers = 1
 	b.generationMode = generation.Sequential
 	return b
 }
 
-// WithSequentialLowMemoryMode defines that maroto will run focusing in reduce memory consumption,
+// WithSequentialLowMemoryMode defines that bpdf will run focusing in reduce memory consumption,
 // chunk workers define how many divisions the work will have.
 func (b *CfgBuilder) WithSequentialLowMemoryMode(chunkWorkers int) Builder {
 	if chunkWorkers < 1 {
@@ -357,7 +357,7 @@ func (b *CfgBuilder) WithCustomFonts(customFonts []*entity.CustomFont) Builder {
 	return b
 }
 
-// WithDebug defines a debug behaviour where maroto will draw borders in everything.
+// WithDebug defines a debug behaviour where bpdf will draw borders in everything.
 func (b *CfgBuilder) WithDebug(on bool) Builder {
 	b.debug = on
 	return b

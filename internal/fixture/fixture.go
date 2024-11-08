@@ -194,13 +194,13 @@ func ImageEntity() entity.Image {
 
 // Node is responsible to give a valid node.Node.
 func Node(rootType string) *node.Node[core.Structure] {
-	marotoNode := node.New[core.Structure](core.Structure{
+	bpdfNode := node.New[core.Structure](core.Structure{
 		Type: rootType,
 	})
 	pageNode := node.New[core.Structure](core.Structure{
 		Type: "page",
 	})
 
-	marotoNode.AddNext(pageNode)
-	return marotoNode
+	bpdfNode.AddNext(pageNode)
+	return bpdfNode
 }

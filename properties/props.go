@@ -1,2 +1,2 @@
-// The properties package contain the public properties of maroto.
+// The properties package contain the public properties of bpdf.
 package properties

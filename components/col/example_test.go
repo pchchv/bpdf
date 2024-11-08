@@ -14,7 +14,7 @@ import (
 
 // ExampleNew demonstrates how to create a Col instance.
 func ExampleNew() {
-	// size is an optional parameters, if not provided, maroto
+	// size is an optional parameters, if not provided, bpdf
 	// will apply the maximum size, even if custom size is applied.
 	size := 12
 	col := col.New(size)
