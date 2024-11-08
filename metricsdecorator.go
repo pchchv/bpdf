@@ -70,6 +70,37 @@ func (m *MetricsDecorator) RegisterFooter(rows ...core.Row) (err error) {
 	return
 }
 
+// AddRow decorates the AddRow method of bpdf instance.
+func (m *MetricsDecorator) AddRow(rowHeight float64, cols ...core.Col) core.Row {
+	var r core.Row
+	timeSpent := time.GetTimeSpent(func() {
+		r = m.inner.AddRow(rowHeight, cols...)
+	})
+
+	m.addRowTime = append(m.addRowTime, timeSpent)
+	return r
+}
+
+// AddRows decorates the AddRows method of bpdf instance.
+func (m *MetricsDecorator) AddRows(rows ...core.Row) {
+	timeSpent := time.GetTimeSpent(func() {
+		m.inner.AddRows(rows...)
+	})
+
+	m.addRowsTime = append(m.addRowsTime, timeSpent)
+}
+
+// AddAutoRow decorates the AddRow method of bpdf instance.
+func (m *MetricsDecorator) AddAutoRow(cols ...core.Col) core.Row {
+	var r core.Row
+	timeSpent := time.GetTimeSpent(func() {
+		r = m.inner.AddAutoRow(cols...)
+	})
+
+	m.addAutoRowTime = append(m.addAutoRowTime, timeSpent)
+	return r
+}
+
 func (m *MetricsDecorator) getAVG(times []*metrics.Time) *metrics.Time {
 	var sum float64
 	for _, time := range times {
