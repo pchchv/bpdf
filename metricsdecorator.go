@@ -2,7 +2,10 @@ package bpdf
 
 import (
 	"github.com/pchchv/bpdf/core"
+	"github.com/pchchv/bpdf/core/entity"
+	"github.com/pchchv/bpdf/internal/time"
 	"github.com/pchchv/bpdf/metrics"
+	"github.com/pchchv/bpdf/node"
 )
 
 type MetricsDecorator struct {
@@ -15,6 +18,22 @@ type MetricsDecorator struct {
 	generateTime   *metrics.Time
 	structureTime  *metrics.Time
 	inner          core.BPDF
+}
+
+// GetStructure decorates the GetStructure method of maroto instance.
+func (m *MetricsDecorator) GetStructure() *node.Node[core.Structure] {
+	var tree *node.Node[core.Structure]
+	timeSpent := time.GetTimeSpent(func() {
+		tree = m.inner.GetStructure()
+	})
+	m.structureTime = timeSpent
+
+	return tree
+}
+
+// GetCurrentConfig decorates the GetCurrentConfig method of maroto instance.
+func (m *MetricsDecorator) GetCurrentConfig() *entity.Config {
+	return m.inner.GetCurrentConfig()
 }
 
 func (m *MetricsDecorator) getAVG(times []*metrics.Time) *metrics.Time {
