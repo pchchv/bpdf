@@ -20,6 +20,14 @@ type MetricsDecorator struct {
 	inner          core.BPDF
 }
 
+// NewMetricsDecorator is responsible to create the metrics decorator
+// for the bpdf instance.
+func NewMetricsDecorator(inner core.BPDF) core.BPDF {
+	return &MetricsDecorator{
+		inner: inner,
+	}
+}
+
 // GetStructure decorates the GetStructure method of bpdf instance.
 func (m *MetricsDecorator) GetStructure() *node.Node[core.Structure] {
 	var tree *node.Node[core.Structure]
