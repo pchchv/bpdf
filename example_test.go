@@ -65,3 +65,44 @@ func ExampleBPDF_AddRow() {
 
 	// Do things and generate
 }
+
+// ExampleBPDFGetStruct demonstrates how to get bpdf component tree
+func ExampleBPDF_GetStructure() {
+	m := bpdf.New()
+
+	m.AddRow(40, text.NewCol(12, "text"))
+
+	m.GetStructure()
+
+	// Do things and generate
+}
+
+// ExampleBPDF_RegisterHeader demonstrates how to register a header to me added in every new page.
+// An error is returned if the area occupied by the header is greater than the page area.
+func ExampleBPDF_RegisterHeader() {
+	m := bpdf.New()
+
+	err := m.RegisterHeader(
+		code.NewBarRow(12, "barcode"),
+		text.NewRow(12, "text"))
+	if err != nil {
+		panic(err)
+	}
+
+	// Do things and generate
+}
+
+// ExampleBPDF_RegisterFooter demonstrates how to register a footer to me added in every new page.
+// An error is returned if the area occupied by the footer is greater than the page area.
+func ExampleBPDF_RegisterFooter() {
+	m := bpdf.New()
+
+	err := m.RegisterFooter(
+		code.NewBarRow(12, "barcode"),
+		text.NewRow(12, "text"))
+	if err != nil {
+		panic(err)
+	}
+
+	// Do things and generate
+}
