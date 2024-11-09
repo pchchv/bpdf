@@ -4,6 +4,7 @@ import (
 	"github.com/pchchv/bpdf"
 	"github.com/pchchv/bpdf/components/code"
 	"github.com/pchchv/bpdf/components/page"
+	"github.com/pchchv/bpdf/components/text"
 	"github.com/pchchv/bpdf/config"
 )
 
@@ -40,6 +41,27 @@ func ExampleBPDF_AddPages() {
 	p.Add(code.NewBarRow(10, "barcode"))
 
 	m.AddPages(p)
+
+	// Do things and generate
+}
+
+// ExampleBPDF_AddRows demonstrates how to add new rows in bpdf.
+func ExampleBPDF_AddRows() {
+	m := bpdf.New()
+
+	m.AddRows(
+		code.NewBarRow(12, "barcode"),
+		text.NewRow(12, "text"),
+	)
+
+	// Do things and generate
+}
+
+// ExampleBPDF_AddRow demonstrates how to add a new row in bpdf.
+func ExampleBPDF_AddRow() {
+	m := bpdf.New()
+
+	m.AddRow(10, text.NewCol(12, "text"))
 
 	// Do things and generate
 }
