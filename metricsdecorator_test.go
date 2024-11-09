@@ -8,6 +8,7 @@ import (
 	"github.com/pchchv/bpdf/components/col"
 	"github.com/pchchv/bpdf/components/page"
 	"github.com/pchchv/bpdf/components/row"
+	"github.com/pchchv/bpdf/components/text"
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/mocks"
 	"github.com/pchchv/bpdf/node"
@@ -91,6 +92,44 @@ func TestMetricsDecorator_AddRows(t *testing.T) {
 	assert.Equal(t, "add_rows", report.TimeMetrics[1].Key)
 	assert.Equal(t, 2, len(report.TimeMetrics[1].Times))
 	inner.AssertNumberOfCalls(t, "AddRows", 2)
+}
+
+func TestMetricsDecorator_RegisterHeader(t *testing.T) {
+	row := text.NewRow(10, "text")
+	inner := mocks.NewBPDF(t)
+	inner.EXPECT().RegisterHeader(row).Return(nil)
+	inner.EXPECT().Generate().Return(&core.Pdf{}, nil)
+	sut := bpdf.NewMetricsDecorator(inner)
+
+	err := sut.RegisterHeader(row)
+
+	assert.Nil(t, err)
+	doc, err := sut.Generate()
+	assert.Nil(t, err)
+	report := doc.GetReport()
+	assert.NotNil(t, report)
+	assert.Equal(t, 2, len(report.TimeMetrics))
+	assert.Equal(t, "generate", report.TimeMetrics[0].Key)
+	assert.Equal(t, "header", report.TimeMetrics[1].Key)
+}
+
+func TestMetricsDecorator_RegisterFooter(t *testing.T) {
+	row := text.NewRow(10, "text")
+	inner := mocks.NewBPDF(t)
+	inner.EXPECT().RegisterFooter(row).Return(nil)
+	inner.EXPECT().Generate().Return(&core.Pdf{}, nil)
+	sut := bpdf.NewMetricsDecorator(inner)
+
+	err := sut.RegisterFooter(row)
+
+	assert.Nil(t, err)
+	doc, err := sut.Generate()
+	assert.Nil(t, err)
+	report := doc.GetReport()
+	assert.NotNil(t, report)
+	assert.Equal(t, 2, len(report.TimeMetrics))
+	assert.Equal(t, "generate", report.TimeMetrics[0].Key)
+	assert.Equal(t, "footer", report.TimeMetrics[1].Key)
 }
 
 func TestMetricsDecorator_GetStructure(t *testing.T) {
