@@ -1,6 +1,8 @@
 package bpdf_test
 
 import (
+	"log"
+
 	"github.com/pchchv/bpdf"
 	"github.com/pchchv/bpdf/components/code"
 	"github.com/pchchv/bpdf/components/page"
@@ -123,4 +125,20 @@ func ExampleBPDF_GetCurrentConfig() {
 	m.GetCurrentConfig()
 
 	// Do things and generate
+}
+
+// ExampleBPDF_Generate demonstrates how to generate a file.
+func ExampleBPDF_Generate() {
+	m := bpdf.New()
+
+	// Add rows, pages and etc.
+
+	doc, err := m.Generate()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// You can retrieve as Base64, Save file,
+	// Merge with another file or GetReport.
+	_ = doc.GetBytes()
 }
