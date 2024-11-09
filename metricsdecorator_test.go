@@ -10,6 +10,7 @@ import (
 	"github.com/pchchv/bpdf/components/row"
 	"github.com/pchchv/bpdf/components/text"
 	"github.com/pchchv/bpdf/core"
+	"github.com/pchchv/bpdf/core/entity"
 	"github.com/pchchv/bpdf/mocks"
 	"github.com/pchchv/bpdf/node"
 	"github.com/stretchr/testify/assert"
@@ -157,4 +158,27 @@ func TestMetricsDecorator_GetStructure(t *testing.T) {
 	assert.Equal(t, 1, len(report.TimeMetrics[1].Times))
 	inner.AssertNumberOfCalls(t, "AddRows", 1)
 	inner.AssertNumberOfCalls(t, "GetStructure", 1)
+}
+
+func TestMetricsDecorator_GetCurrentConfig(t *testing.T) {
+	cfgToReturn := &entity.Config{
+		MaxGridSize: 15,
+	}
+	inner := mocks.NewBPDF(t)
+	inner.EXPECT().GetCurrentConfig().Return(cfgToReturn)
+	sut := bpdf.NewMetricsDecorator(inner)
+
+	cfg := sut.GetCurrentConfig()
+
+	assert.Equal(t, cfgToReturn.MaxGridSize, cfg.MaxGridSize)
+}
+
+func TestMetricsDecorator_FitlnCurrentPage(t *testing.T) {
+	inner := mocks.NewBPDF(t)
+	inner.EXPECT().FitlnCurrentPage(10.0).Return(true)
+	inner.EXPECT().FitlnCurrentPage(20.0).Return(false)
+	sut := bpdf.NewMetricsDecorator(inner)
+
+	assert.True(t, sut.FitlnCurrentPage(10))
+	assert.False(t, sut.FitlnCurrentPage(20))
 }
