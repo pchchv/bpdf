@@ -106,3 +106,21 @@ func ExampleBPDF_RegisterFooter() {
 
 	// Do things and generate
 }
+
+// ExampleBPDF_FitlnCurrentPage demonstrate how to check if the new line fits on the current page.
+func ExampleBPDF_FitlnCurrentPage() {
+	m := bpdf.New()
+
+	m.FitlnCurrentPage(12)
+
+	// Do things and generate
+}
+
+// ExampleBPDF_FitlnCurrentPage demonstrate how to check if the new line fits on the current page.
+func ExampleBPDF_GetCurrentConfig() {
+	m := bpdf.New()
+
+	m.GetCurrentConfig()
+
+	// Do things and generate
+}
