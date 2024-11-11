@@ -30,3 +30,22 @@ func Build[T Listable](arr []T) (rows []core.Row, err error) {
 
 	return rows, nil
 }
+
+// BuildFromPointer is responsible to receive a
+// collection of objects that implements Listable and build the rows of TableList.
+// This method should be used in case of a collection of pointers.
+func BuildFromPointer[T Listable](arr []*T) ([]core.Row, error) {
+	if len(arr) == 0 {
+		return nil, errors.New("empty array")
+	}
+
+	var list []T
+	for _, pointer := range arr {
+		if pointer == nil {
+			return nil, errors.New("nil element in array")
+		}
+		list = append(list, *pointer)
+	}
+
+	return Build(list)
+}
