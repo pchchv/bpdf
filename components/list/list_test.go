@@ -2,11 +2,16 @@ package list_test
 
 import (
 	"fmt"
+	"testing"
 
+	"github.com/pchchv/bpdf/components/list"
+	"github.com/pchchv/bpdf/components/page"
 	"github.com/pchchv/bpdf/components/row"
 	"github.com/pchchv/bpdf/components/text"
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/internal/fixture"
+	"github.com/pchchv/bpdf/test"
+	"github.com/stretchr/testify/assert"
 )
 
 type anyType struct {
@@ -57,4 +62,23 @@ func buildPointerList(qtd int) (arr []*anyType) {
 	}
 
 	return
+}
+
+func TestBuild(t *testing.T) {
+	t.Run("when arr is empty, should return error", func(t *testing.T) {
+		r, err := list.Build[anyType](nil)
+
+		assert.NotNil(t, err)
+		assert.Nil(t, r)
+	})
+
+	t.Run("when arr is not empty, should return rows", func(t *testing.T) {
+		arr := buildList(10)
+
+		r, err := list.Build(arr)
+		p := page.New().Add(r...)
+
+		assert.Nil(t, err)
+		test.New(t).Assert(p.GetStructure()).Equals("components/list/build.json")
+	})
 }
