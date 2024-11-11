@@ -16,6 +16,11 @@ import (
 	"github.com/pchchv/bpdf/properties"
 )
 
+type Object struct {
+	Key   string
+	Value string
+}
+
 func buildCodesRow() []core.Row {
 	return []core.Row{
 		row.New(20).Add(
