@@ -1,6 +1,8 @@
 package list_test
 
 import (
+	"fmt"
+
 	"github.com/pchchv/bpdf/components/row"
 	"github.com/pchchv/bpdf/components/text"
 	"github.com/pchchv/bpdf/core"
@@ -33,4 +35,26 @@ func (a anyType) GetContent(i int) core.Row {
 	}
 
 	return r
+}
+
+func buildList(qtd int) (arr []anyType) {
+	for i := 0; i < qtd; i++ {
+		arr = append(arr, anyType{
+			Key:   fmt.Sprintf("key(%d)", i),
+			Value: fmt.Sprintf("value(%d)", i),
+		})
+	}
+
+	return
+}
+
+func buildPointerList(qtd int) (arr []*anyType) {
+	for i := 0; i < qtd; i++ {
+		arr = append(arr, &anyType{
+			Key:   fmt.Sprintf("key(%d)", i),
+			Value: fmt.Sprintf("value(%d)", i),
+		})
+	}
+
+	return
 }
