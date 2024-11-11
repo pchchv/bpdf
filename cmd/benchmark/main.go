@@ -126,3 +126,14 @@ func buildFooter() []core.Row {
 		),
 	}
 }
+
+func getObjects(max int) (objects []Object) {
+	for i := 0; i < max; i++ {
+		objects = append(objects, Object{
+			Key:   fmt.Sprintf("Key: %d", i),
+			Value: fmt.Sprintf("Bytes: %d", i),
+		})
+	}
+
+	return
+}
