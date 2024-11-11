@@ -2,26 +2,34 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
+	"github.com/pchchv/bpdf"
 	"github.com/pchchv/bpdf/components/code"
 	"github.com/pchchv/bpdf/components/col"
 	"github.com/pchchv/bpdf/components/image"
+	"github.com/pchchv/bpdf/components/list"
 	"github.com/pchchv/bpdf/components/row"
 	"github.com/pchchv/bpdf/components/signature"
 	"github.com/pchchv/bpdf/components/text"
+	"github.com/pchchv/bpdf/config"
 	"github.com/pchchv/bpdf/consts/align"
 	"github.com/pchchv/bpdf/consts/extension"
 	"github.com/pchchv/bpdf/consts/fontstyle"
 	"github.com/pchchv/bpdf/core"
+	"github.com/pchchv/bpdf/metrics"
 	"github.com/pchchv/bpdf/properties"
 )
 
-var background = &properties.Color{
-	Red:   200,
-	Green: 200,
-	Blue:  200,
-}
+var (
+	dummyText  = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac condimentum sem."
+	background = &properties.Color{
+		Red:   200,
+		Green: 200,
+		Blue:  200,
+	}
+)
 
 type Object struct {
 	Key   string
@@ -136,4 +144,52 @@ func getObjects(max int) (objects []Object) {
 	}
 
 	return
+}
+
+func run() *metrics.Time {
+	var err error
+	cfg := config.NewBuilder().
+		WithPageNumber().
+		Build()
+	mrt := bpdf.New(cfg)
+	m := bpdf.NewMetricsDecorator(mrt)
+	if err = m.RegisterHeader(buildHeader()...); err != nil {
+		log.Fatal(err.Error())
+	}
+
+	if err = m.RegisterFooter(buildFooter()...); err != nil {
+		log.Fatal(err.Error())
+	}
+
+	m.AddRows(
+		text.NewRow(20, "Main features", properties.Text{Size: 15, Top: 6.5}),
+	)
+
+	objects := getObjects(1158)
+	rows, err := list.Build[Object](objects)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	m.AddRows(rows...)
+	for i := 0; i < 1158; i++ {
+		m.AddRows(buildCodesRow()...)
+		m.AddRows(buildImagesRow()...)
+		m.AddRows(buildTextsRow()...)
+	}
+
+	m.AddRows(
+		text.NewRow(15, "Dummy Data", properties.Text{Size: 12, Top: 5, Align: align.Center}),
+	)
+
+	for i := 0; i < 1158; i++ {
+		m.AddRows(text.NewRow(20, dummyText+dummyText+dummyText+dummyText+dummyText))
+	}
+
+	document, err := m.Generate()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	return document.GetReport().TimeMetrics[0].Avg
 }
