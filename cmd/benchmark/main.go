@@ -193,3 +193,15 @@ func run() *metrics.Time {
 
 	return document.GetReport().TimeMetrics[0].Avg
 }
+
+func main() {
+	var content string
+	for i := 0; i < 100; i++ {
+		fmt.Println(i)
+		content += fmt.Sprintf("%f", run().Value) + "\n"
+	}
+
+	if err := os.WriteFile("docs/assets/text/benchmark.txt", []byte(content), os.ModePerm); err != nil {
+		log.Fatal(err.Error())
+	}
+}
