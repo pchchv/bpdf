@@ -12,13 +12,41 @@ import (
 	"github.com/pchchv/bpdf/components/text"
 	"github.com/pchchv/bpdf/consts/align"
 	"github.com/pchchv/bpdf/consts/extension"
+	"github.com/pchchv/bpdf/consts/fontstyle"
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/properties"
 )
 
+var background = &properties.Color{
+	Red:   200,
+	Green: 200,
+	Blue:  200,
+}
+
 type Object struct {
 	Key   string
 	Value string
+}
+
+func (o Object) GetHeader() core.Row {
+	return row.New(10).Add(
+		text.NewCol(4, "Key", properties.Text{Style: fontstyle.Bold}),
+		text.NewCol(8, "Bytes", properties.Text{Style: fontstyle.Bold}),
+	)
+}
+
+func (o Object) GetContent(i int) core.Row {
+	r := row.New(5).Add(
+		text.NewCol(4, o.Key),
+		text.NewCol(8, o.Value),
+	)
+	if i%2 == 0 {
+		r.WithStyle(&properties.Cell{
+			BackgroundColor: background,
+		})
+	}
+
+	return r
 }
 
 func buildCodesRow() []core.Row {
