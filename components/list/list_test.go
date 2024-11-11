@@ -82,3 +82,33 @@ func TestBuild(t *testing.T) {
 		test.New(t).Assert(p.GetStructure()).Equals("components/list/build.json")
 	})
 }
+
+func TestBuildFromPointer(t *testing.T) {
+	t.Run("when arr is empty, should return error", func(t *testing.T) {
+		arr := buildPointerList(0)
+
+		r, err := list.BuildFromPointer(arr)
+
+		assert.NotNil(t, err)
+		assert.Nil(t, r)
+	})
+
+	t.Run("when arr is not empty, should return rows", func(t *testing.T) {
+		arr := buildPointerList(10)
+
+		r, _ := list.BuildFromPointer(arr)
+		p := page.New().Add(r...)
+
+		test.New(t).Assert(p.GetStructure()).Equals("components/list/build_from_pointer.json")
+	})
+
+	t.Run("when arr is has a nil element, should return error", func(t *testing.T) {
+		arr := buildPointerList(10)
+		arr[5] = nil
+
+		r, err := list.BuildFromPointer(arr)
+
+		assert.NotNil(t, err)
+		assert.Nil(t, r)
+	})
+}
