@@ -3,6 +3,8 @@ package list_test
 import (
 	"fmt"
 
+	"github.com/pchchv/bpdf"
+	"github.com/pchchv/bpdf/components/list"
 	"github.com/pchchv/bpdf/components/row"
 	"github.com/pchchv/bpdf/components/text"
 	"github.com/pchchv/bpdf/core"
@@ -30,4 +32,42 @@ func (o Obj) GetContent(_ int) core.Row {
 	idCol := text.NewCol(6, fmt.Sprintf("%d", o.ID))
 	nameCol := text.NewCol(6, o.Name)
 	return row.New(5).Add(idCol, nameCol)
+}
+
+// ExampleBuild demonstrates how to create a list of rows based into an array of objects.
+func ExampleBuild() {
+	objs := []Obj{
+		{
+			ID:   0,
+			Name: "obj name 0",
+		},
+		{
+			ID:   1,
+			Name: "obj name 1",
+		},
+	}
+	rows, _ := list.Build[Obj](objs)
+	m := bpdf.New()
+	m.AddRows(rows...)
+
+	// generate document
+}
+
+// ExampleBuild demonstrates how to create a list of rows based into an array of pointer objects.
+func ExampleBuildFromPointer() {
+	objs := []*Obj{
+		{
+			ID:   0,
+			Name: "obj name 0",
+		},
+		{
+			ID:   1,
+			Name: "obj name 1",
+		},
+	}
+	rows, _ := list.BuildFromPointer[Obj](objs)
+	m := bpdf.New()
+	m.AddRows(rows...)
+
+	// generate document
 }
