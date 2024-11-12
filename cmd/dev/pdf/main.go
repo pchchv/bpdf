@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/pchchv/bpdf/components/code"
+	"github.com/pchchv/bpdf/components/col"
 	"github.com/pchchv/bpdf/components/image"
 	"github.com/pchchv/bpdf/components/row"
 	"github.com/pchchv/bpdf/components/text"
@@ -46,6 +47,33 @@ func buildImagesRow() []core.Row {
 		row.New(20).Add(
 			text.NewCol(4, "Image From Bytes:", properties.Text{Size: 15, Top: 6, Align: align.Center}),
 			image.NewFromBytesCol(8, bytes, extension.Png, properties.Rect{Center: true, Percent: 90}),
+		),
+	}
+}
+
+func buildHeader() []core.Row {
+	r1 := row.New(30).Add(
+		col.New(12).Add(
+			text.New("Config V2", properties.Text{
+				Top:   5,
+				Size:  15,
+				Align: align.Center,
+			}),
+			text.New("Grid system, fast generation, embedded metrics and testable.", properties.Text{
+				Top:   13,
+				Size:  13,
+				Align: align.Center,
+			}),
+		),
+	)
+
+	return []core.Row{r1}
+}
+
+func buildFooter() []core.Row {
+	return []core.Row{
+		row.New(10).Add(
+			text.NewCol(2, "GitHub: https://github.com/pchchv/bpdf/"),
 		),
 	}
 }
