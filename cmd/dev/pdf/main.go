@@ -2,19 +2,24 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
+	"github.com/pchchv/bpdf"
 	"github.com/pchchv/bpdf/components/code"
 	"github.com/pchchv/bpdf/components/col"
 	"github.com/pchchv/bpdf/components/image"
 	"github.com/pchchv/bpdf/components/row"
 	"github.com/pchchv/bpdf/components/signature"
 	"github.com/pchchv/bpdf/components/text"
+	"github.com/pchchv/bpdf/config"
 	"github.com/pchchv/bpdf/consts/align"
 	"github.com/pchchv/bpdf/consts/extension"
 	"github.com/pchchv/bpdf/core"
 	"github.com/pchchv/bpdf/properties"
 )
+
+var dummyText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac condimentum sem."
 
 func buildCodesRow() []core.Row {
 	return []core.Row{
@@ -90,5 +95,48 @@ func buildTextsRow() []core.Row {
 			text.NewCol(4, "Signature:", properties.Text{Size: 15, Top: 17, Align: align.Center}),
 			signature.NewCol(8, "Name", properties.Signature{FontSize: 10}),
 		),
+	}
+}
+
+func main() {
+	var err error
+	cfg := config.NewBuilder().
+		WithPageNumber().
+		Build()
+	mrt := bpdf.New(cfg)
+	m := bpdf.NewMetricsDecorator(mrt)
+	if err = m.RegisterHeader(buildHeader()...); err != nil {
+		log.Fatal(err.Error())
+	}
+
+	if err = m.RegisterFooter(buildFooter()...); err != nil {
+		log.Fatal(err.Error())
+	}
+
+	m.AddRows(
+		text.NewRow(20, "Main features", properties.Text{Size: 15, Top: 6.5}),
+	)
+	m.AddRows(buildCodesRow()...)
+	m.AddRows(buildImagesRow()...)
+	m.AddRows(buildTextsRow()...)
+	m.AddRows(
+		text.NewRow(15, "Dummy Data", properties.Text{Size: 12, Top: 5, Align: align.Center}),
+	)
+
+	for i := 0; i < 50; i++ {
+		m.AddRows(text.NewRow(20, dummyText+dummyText+dummyText+dummyText+dummyText))
+	}
+
+	document, err := m.Generate()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	if err = document.Save("docs/assets/pdf/v2.pdf"); err != nil {
+		log.Fatal(err.Error())
+	}
+
+	if err = document.GetReport().Save("docs/assets/text/v2.txt"); err != nil {
+		log.Fatal(err.Error())
 	}
 }
